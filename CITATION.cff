@@ -1,6 +1,9 @@
 cff-version: 1.2.0
 title: "LLM-MovieLens: A Portable Pipeline and Testbed for LLM-Synthesized Item Profiles"
-message: "If you use this resource, please cite the paper. The DOI below is the\n  concept DOI, which always resolves to the newest release; v1.0's own DOI is\n  listed under identifiers."
+message: >-
+  If you use this resource, please cite the paper. The DOI below is the concept
+  DOI, which always resolves to the newest release; each release also has its own
+  version DOI, listed on the Zenodo record — v1.0's is 10.5281/zenodo.22766654.
 type: dataset
 # The RELEASE version, not the CFF schema version above. Kept equal to
 # metadata/croissant.json's "version" -- two files naming different versions of
