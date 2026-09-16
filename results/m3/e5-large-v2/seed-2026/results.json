@@ -1,0 +1,19 @@
+{
+  "experiment": "m3/e5-large-v2/seed-2026",
+  "config": "M3",
+  "seed": 2026,
+  "test_metrics": {
+    "HR@10": 0.42943624668936814,
+    "Recall@10": 0.048912090403266925,
+    "NDCG@10": 0.11529676588807819,
+    "HR@20": 0.5323496027241771,
+    "Recall@20": 0.08087890609146033,
+    "NDCG@20": 0.11376098624154915,
+    "HR@50": 0.6799091940976163,
+    "Recall@50": 0.14807828259626213,
+    "NDCG@50": 0.12705857447301586,
+    "MRR": 0.23976752111832364,
+    "n_eval_users": 2643.0
+  },
+  "_provenance": "eval-only full-ranking re-evaluation of the released best_model.pt (no retraining)."
+}

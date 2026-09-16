@@ -1,0 +1,109 @@
+{
+  "_what": "Measured generation economics for the ML-20M profile pack. These are RECORDED MEASUREMENTS of one-time external events (API billing, token counting), not quantities recomputable from a released file \u2014 so this JSON is their canonical home, and every value carries how it was measured.",
+  "_generated_from": "hand-curated from the measurement records cited per field; not auto-derived",
+  "_curated": "2026-08-30",
+  "catalogue_size": {
+    "value": 10381,
+    "unit": "profiles",
+    "method": "count of released movie_profiles.json",
+    "source": "profiles/ml20m/claude-haiku-4-5/movie_profiles.json (data release)"
+  },
+  "input_tokens_per_profile": {
+    "value": 2012.4,
+    "unit": "tokens",
+    "method": "measured on a 5-movie test batch, fresh (uncached) input",
+    "source": "measured during the no-aggregate regeneration, 2026-08-18 (cost/runtime record)",
+    "note": "Both papers previously stated ~2,037, which has no traceable source."
+  },
+  "output_tokens_per_profile": {
+    "value": 399.6,
+    "unit": "tokens",
+    "method": "measured on the same 5-movie test batch",
+    "source": "measured during the no-aggregate regeneration, 2026-08-18"
+  },
+  "batch_cost_usd_projected": {
+    "value": 20.82,
+    "unit": "USD",
+    "method": "per-profile token measurement x 10,381 at the 50% Batches-API discount",
+    "source": "measured during the no-aggregate regeneration, 2026-08-18"
+  },
+  "batch_cost_usd_actual": {
+    "value": 20.66,
+    "unit": "USD",
+    "method": "actual spend on the no-aggregate regeneration",
+    "source": "actual spend on the no-aggregate regeneration, 2026-08-18"
+  },
+  "sync_cost_usd": {
+    "value": 41.63,
+    "unit": "USD",
+    "method": "same token measurement without the batch discount",
+    "source": "measured during the no-aggregate regeneration, 2026-08-18"
+  },
+  "batch_discount": {
+    "value": 0.5,
+    "unit": "fraction",
+    "method": "Anthropic Batches API published rate"
+  },
+  "system_prompt_tokens": {
+    "value": 1389,
+    "unit": "tokens",
+    "method": "measured with the provider's count_tokens endpoint",
+    "source": "measured with the provider's count_tokens endpoint (corrected from an earlier ~1,328 estimate)"
+  },
+  "min_cacheable_prefix_tokens": {
+    "value": 4096,
+    "unit": "tokens",
+    "method": "model documentation for Claude Haiku 4.5",
+    "note": "System prompt is below this, so the cache_control marker never creates an entry."
+  },
+  "cache_read_tokens_observed": {
+    "value": 0,
+    "unit": "tokens",
+    "method": "measured cache_read_input_tokens summed across all requests",
+    "source": "measured over all 10,381 requests"
+  },
+  "n_requests_measured": {
+    "value": 10381,
+    "unit": "requests"
+  },
+  "batch_latency_examples": [
+    {
+      "requests": 5,
+      "wall_clock": "43m43s",
+      "note": "queue position dominates"
+    },
+    {
+      "requests": 10000,
+      "wall_clock": "13m12s"
+    }
+  ],
+  "live_verification_2026_09_02": {
+    "_what": "A 5-movie live batch run through the RELEASED batch_generate.py, to test whether the shipped code reproduces the reported economics. Independent of the April 2026 run: different day, current SDK, prices read from the bill.",
+    "batch_id": "msgbatch_01Y4oDLHqyshim49vAQaA5x5",
+    "n_requests": 5,
+    "succeeded": 5,
+    "errored": 0,
+    "wall_clock": "13m19s",
+    "input_tokens_per_profile": {
+      "value": 2043.8,
+      "note": "recorded value 2012.4; +1.6% on n=5"
+    },
+    "output_tokens_per_profile": {
+      "value": 394.8,
+      "note": "recorded value 399.6; -1.2% on n=5"
+    },
+    "cache_read_input_tokens": {
+      "value": 0,
+      "note": "Confirms the min-cacheable-prefix finding live: the cache_control marker is accepted and creates nothing, because the 1,389-token system prompt is below Claude Haiku 4.5's 4,096-token minimum."
+    },
+    "cache_creation_input_tokens": {
+      "value": 0
+    },
+    "extrapolated_to_catalogue": {
+      "batch_usd": 20.85,
+      "sync_usd": 41.71,
+      "note": "against recorded 20.66 / 41.63 -- within 1%"
+    },
+    "verdict": "The released batch path reproduces the reported cost and the caching finding."
+  }
+}

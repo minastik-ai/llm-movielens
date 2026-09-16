@@ -1,0 +1,19 @@
+{
+  "experiment": "m2b/bge-large-en-v1.5/seed-2026",
+  "config": "M2b",
+  "seed": 2026,
+  "test_metrics": {
+    "HR@10": 0.43321982595535374,
+    "Recall@10": 0.04814946976480104,
+    "NDCG@10": 0.11292411174806034,
+    "HR@20": 0.5474839197881196,
+    "Recall@20": 0.08219919161744853,
+    "NDCG@20": 0.11292690283439517,
+    "HR@50": 0.6931517215285661,
+    "Recall@50": 0.15410733528472764,
+    "NDCG@50": 0.12761403347591563,
+    "MRR": 0.23364584558604026,
+    "n_eval_users": 2643.0
+  },
+  "_provenance": "eval-only full-ranking re-evaluation of the released best_model.pt (no retraining)."
+}

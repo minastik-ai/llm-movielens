@@ -1,0 +1,30 @@
+{
+  "_provenance": "parsed from 11 run logs + prompts.jsonl by src/make_generation_macros.py",
+  "items_total": 10381,
+  "retry_items": {
+    "value": 423,
+    "method": "union over all run logs, deduplicated",
+    "by_class": {
+      "batch_errored": 261,
+      "batch_validation": 84,
+      "stream_validation": 33,
+      "stream_failed": 103,
+      "stream_api_error": 80
+    }
+  },
+  "max_attempts": {
+    "value": 3,
+    "method": "max attempt index seen in the logs"
+  },
+  "malformed_id_floor": {
+    "value": 29,
+    "method": "distinct items whose id token fails json.loads",
+    "observed_within_items": 721,
+    "note": "A FLOOR. The prompt log covers a fraction of the catalogue and its sampling rule is undocumented."
+  },
+  "malformed_id_digit_initial": {
+    "value": 29,
+    "of": 29,
+    "method": "breaking tokens beginning with a digit"
+  }
+}

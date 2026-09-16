@@ -1,0 +1,19 @@
+{
+  "experiment": "m1c/bge-large-en-v1.5/seed-789",
+  "config": "M1c",
+  "seed": 789,
+  "test_metrics": {
+    "HR@10": 0.4283011729095725,
+    "Recall@10": 0.0490836175867226,
+    "NDCG@10": 0.11335027674169496,
+    "HR@20": 0.5338630344305714,
+    "Recall@20": 0.08082072867777085,
+    "NDCG@20": 0.11177769965850398,
+    "HR@50": 0.6806659099508134,
+    "Recall@50": 0.14841143935739354,
+    "NDCG@50": 0.12537419669001426,
+    "MRR": 0.23272077204709057,
+    "n_eval_users": 2643.0
+  },
+  "_provenance": "eval-only full-ranking re-evaluation of the released best_model.pt (no retraining)."
+}

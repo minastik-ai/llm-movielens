@@ -1,0 +1,36 @@
+{
+ "_what": "The identity-handle ablation: each catalogue's profiles regenerated with the item's identifying fields withheld, to test whether a profile is a function of the metadata the pipeline ships or of what the model already knows. MEASURED on 2026-09-03; every field records how.",
+ "_design": "Withheld: the structured identity fields (Steam - title, developer, publisher; ML-20M - title, year, director, cast). Kept: everything descriptive (tags, genres, specs; and on ML-20M the plot, keywords, scores, user tags).",
+ "_caveat": "A STRUCTURED-handle ablation. ML-20M free text still leaks identity - the plot names characters, and user tags carry actor names - so the ML-20M figure means 'the title is redundant when the description already determines the profile', NOT 'the model uses no recall'. Do not report it as a recall estimate.",
+ "_method": "Both arms encoded with bge-large-en-v1.5 (the paper's encoder). Retrieval = each masked profile against all full profiles of the same catalogue.",
+ "steam": {
+  "paired_items": 998,
+  "prompt_payload_tokens": 61,
+  "paired_cosine_median": 0.851,
+  "background_cosine": 0.675,
+  "recall_at_1": 26.3,
+  "recall_at_10": 66.1,
+  "median_rank": 4,
+  "mrr": 0.393,
+  "generation_cost_usd": 6.25,
+  "arms_generated": 2,
+  "attempted": 1000,
+  "_why_998_not_1000": "1,000 games were attempted in both arms. Two produced no MASKED profile at all: with the identity withheld, 'Hot Dish' has genres none / tags ['Casual'] / specs ['Single-player'] and 'Mightier' has genres ['Indie'] / tags ['Indie'] / specs ['Single-player','Game demo'], and the model declined to write an 80-120 word profile from that, replying that the input was insufficient. Both generated normally in the FULL arm. This is the boundary condition at its limit -- not an error to retry past -- so the pair count is 998 and the two refusals are reported rather than coerced.",
+  "_identifier_repair": "Two further games initially failed to parse because the model emitted an unquoted identifier built from the title ('\"itemId\": 40k_dow2_cr' for Warhammer 40,000), the same property documented for the movie catalogue ('34street1994'). The Steam parser now overwrites the identifier with the catalogue's own before parsing, as the movie pipeline always did; both then generated normally."
+ },
+ "ml20m": {
+  "paired_items": 1000,
+  "prompt_payload_tokens": 2012,
+  "paired_cosine_median": 0.897,
+  "background_cosine": 0.659,
+  "recall_at_1": 94.1,
+  "recall_at_10": 99.3,
+  "median_rank": 1,
+  "mrr": 0.963,
+  "generation_cost_usd": 3.98,
+  "arms_generated": 1,
+  "_note": "the full arm is the released catalogue; only the masked arm was generated"
+ },
+ "encoder": "BAAI/bge-large-en-v1.5",
+ "candidates_per_query": "the paired set of the same catalogue (995 / 1000)"
+}

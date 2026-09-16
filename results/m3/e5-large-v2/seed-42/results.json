@@ -1,0 +1,19 @@
+{
+  "experiment": "m3/e5-large-v2/seed-42",
+  "config": "M3",
+  "seed": 42,
+  "test_metrics": {
+    "HR@10": 0.43965191070752935,
+    "Recall@10": 0.049864988547255296,
+    "NDCG@10": 0.1172353372988623,
+    "HR@20": 0.5501324252743095,
+    "Recall@20": 0.08390823416250057,
+    "NDCG@20": 0.11606075568555849,
+    "HR@50": 0.6882330684827848,
+    "Recall@50": 0.1533321309027322,
+    "NDCG@50": 0.12917140771819968,
+    "MRR": 0.24506399629724013,
+    "n_eval_users": 2643.0
+  },
+  "_provenance": "eval-only full-ranking re-evaluation of the released best_model.pt (no retraining)."
+}

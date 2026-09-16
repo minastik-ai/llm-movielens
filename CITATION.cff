@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+title: "LLM-MovieLens: A Portable Pipeline and Testbed for LLM-Synthesized Item Profiles"
+message: "If you use this resource, please cite the paper. The DOI below is the\n  concept DOI, which always resolves to the newest release; v1.0's own DOI is\n  listed under identifiers."
+type: dataset
+# The RELEASE version, not the CFF schema version above. Kept equal to
+# metadata/croissant.json's "version" -- two files naming different versions of
+# one artifact is what a reader notices first.
+version: "1.0"
+authors:
+  - family-names: Duong
+    given-names: Tan Nghia
+    orcid: "https://orcid.org/0000-0002-2442-6263"
+    affiliation: "Hanoi University of Science and Technology; Minastik Technology JSC"
+  - family-names: Tran
+    given-names: Manh Hoang
+    orcid: "https://orcid.org/0000-0002-0572-2091"
+    affiliation: "Hanoi University of Science and Technology"
+repository-code: "https://github.com/minastik-ai/llm-movielens"
+url: "https://huggingface.co/datasets/minastik-ai/llm-movielens"
+# The CONCEPT DOI: it resolves to the newest version, so a citation made from
+# this file aggregates across releases instead of splitting per version. v1.0's
+# own DOI is 10.5281/zenodo.22766654, listed on the Zenodo record; it is NOT a
+# second `identifiers` entry here, because cffconvert emits that one in
+# preference to this field and every generated citation would then split.
+doi: "10.5281/zenodo.22766653"
+license: CC-BY-4.0
+license-url: "https://creativecommons.org/licenses/by/4.0/"
+abstract: >-
+  Pipeline and evaluation harness for LLM-synthesized item profiles. A language
+  model reads an item's structured metadata and writes an 80-120 word profile, a
+  10-axis mood vector and 3-5 key themes; the harness evaluates whether the
+  resulting representation outperforms the structured description consumed
+  directly, under a temporal split, five seeds and full ranking. Code and
+  annotations are CC BY 4.0; the generated profiles and their embeddings are
+  CC BY-NC 4.0, reflecting upstream terms.
+keywords:
+  - recommender systems
+  - large language models
+  - item representation
+  - MovieLens
+  - resource

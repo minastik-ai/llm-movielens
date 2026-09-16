@@ -1,0 +1,53 @@
+LICENCES — this release is split, because the parts differ in what they derive from.
+
+────────────────────────────────────────────────────────────────────────────
+CC BY 4.0   https://creativecommons.org/licenses/by/4.0/
+────────────────────────────────────────────────────────────────────────────
+  In the data release (HuggingFace):
+  human_eval/        annotation sheets, ratings, derived results
+  metadata/          datasheet, Croissant record, prompt manifest
+
+  In the code release (GitHub):
+  src/               profile generator, embedding generator, benchmark harness
+  scripts/           every run script behind the paper
+  tools/             verifier, split rebuilder, figure and table generators
+  results/           per-seed result files produced by the harness
+  manifest/          SHA-256 records
+  paper/             the generated macro files the paper's numbers come from
+  docs/              datasheet, reproducibility guide, protocol, surveys
+
+These are our own work end to end. Nothing in them derives from a third-party
+source, so they carry no upstream restriction and are offered under the most
+permissive terms we can grant, commercial use included.
+
+────────────────────────────────────────────────────────────────────────────
+CC BY-NC 4.0   https://creativecommons.org/licenses/by-nc/4.0/
+────────────────────────────────────────────────────────────────────────────
+  profiles/          LLM-generated item profiles, mood vectors, key themes
+  embeddings/        encodings of that generated text, and composites of them
+
+The text in profiles/ was written by a language model that was shown TMDb
+metadata and MovieLens tag-genome scores. It is our output, but it is generated
+FROM sources whose own terms are non-commercial, and we cannot grant rights we
+do not hold. The non-commercial condition therefore reflects the upstream
+position, not a preference of ours. Research use is unrestricted: academic and
+industry researchers alike may use these files for research.
+
+If you want these artifacts for a commercial purpose, contact the authors —
+this restriction can be revisited if the upstream permissions widen.
+
+────────────────────────────────────────────────────────────────────────────
+NOT COVERED — not redistributed here, and not ours to licence
+────────────────────────────────────────────────────────────────────────────
+  MovieLens 20M interaction data, tag genome, genre strings
+      (c) GroupLens Research, University of Minnesota.
+      https://grouplens.org/datasets/movielens/20m/ — obtain under their terms.
+      No permission from GroupLens is required for this release, because none
+      of their data is redistributed in it. Rebuild the benchmark splits with
+      rebuild_splits.py from your own copy.
+  TMDb metadata — obtain with your own API key.
+  Open Library records used for the book catalogue (CC0).
+
+ATTRIBUTION
+Cite the accompanying paper. This product uses the TMDB API but is not
+endorsed, certified, or otherwise approved by TMDB.

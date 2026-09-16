@@ -1,0 +1,34 @@
+{
+  "n_items": 10381,
+  "primitives": {
+    "Prof": {
+      "label": "profile",
+      "file": "release/hf/embeddings/ml20m/bge-large-en-v1.5/profile_embeddings.npy",
+      "dim": 1024,
+      "distinct": 10381,
+      "empty": 0
+    },
+    "Mood": {
+      "label": "mood",
+      "file": "release/hf/embeddings/ml20m/bge-large-en-v1.5/mood_vectors.npy",
+      "dim": 10,
+      "distinct": 10352,
+      "empty": 0
+    },
+    "Theme": {
+      "label": "themes",
+      "file": "release/hf/embeddings/ml20m/bge-large-en-v1.5/theme_matrix.npy",
+      "dim": 528,
+      "distinct": 6446,
+      "empty": 1130
+    }
+  },
+  "themes": {
+    "colliding_items": 4764,
+    "colliding_pct": 45.9,
+    "largest_group": 1130,
+    "mean_per_item": 1.99,
+    "empty_pct": 10.9
+  },
+  "_provenance": "computed from the released arrays under release/hf/embeddings/ml20m/ by src/make_feature_diag_macros.py"
+}

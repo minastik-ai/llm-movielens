@@ -1,0 +1,19 @@
+{
+  "experiment": "m7/e5-large-v2/seed-42",
+  "config": "M7",
+  "seed": 42,
+  "test_metrics": {
+    "HR@10": 0.43662504729474083,
+    "Recall@10": 0.04948443712258819,
+    "NDCG@10": 0.11660284273451879,
+    "HR@20": 0.5524025728339008,
+    "Recall@20": 0.08242707888928842,
+    "NDCG@20": 0.1150346003639873,
+    "HR@50": 0.6912599318955732,
+    "Recall@50": 0.15270335068465815,
+    "NDCG@50": 0.12892792351572224,
+    "MRR": 0.24479940989172203,
+    "n_eval_users": 2643.0
+  },
+  "_provenance": "eval-only full-ranking re-evaluation of the released best_model.pt (no retraining)."
+}

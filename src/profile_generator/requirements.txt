@@ -1,0 +1,29 @@
+# LLM Movie Profile Generator — Dependencies
+# Python 3.10+
+
+# Core data processing
+# Upper bounds are deliberate. Unpinned majors have already broken this
+# project once: anthropic 1.x removed `temperature` from messages.create(),
+# so the generator could no longer reproduce the sampling the paper states.
+# torch / sentence-transformers move the EMBEDDINGS, which are the paper's
+# features, so a drift there moves every number for anyone who regenerates
+# rather than downloading. Pinned 2026-09-02.
+pandas>=2.1.0,<4.0
+numpy>=1.24.0,<3.0
+
+# Anthropic Claude API
+# Pinned BELOW 1.0 deliberately. anthropic 1.x removed `temperature` from
+# messages.create() -- its output_config carries only `effort` and `format` --
+# so on 1.x this pipeline raises TypeError and cannot reproduce the sampling
+# setting the paper states (temperature 0.3). Verified 2026-09-02: 0.125.0
+# works, 1.2.0 fails.
+anthropic>=0.40.0,<1.0
+
+# TMDb API crawling
+aiohttp>=3.9.0,<4.0
+certifi>=2024.2.2  # imported by tmdb_crawler.py
+
+# Environment variable loading
+python-dotenv>=1.0.0,<2.0
+
+# Utilities (already in stdlib: json, asyncio, logging, pathlib, argparse)
