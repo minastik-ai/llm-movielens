@@ -2,6 +2,17 @@
 
 Following the framework of [Gebru et al. (2021)](https://arxiv.org/abs/1803.09010).
 
+**Scope.** This datasheet documents the **ML-20M instantiation** — 10,381 film
+profiles, the catalogue every result in the paper is computed on. The release also
+ships a **second instantiation on a catalogue with no shared metadata source**:
+9,289 Amazon-Books profiles (of 9,332 items; the 43 without usable metadata are
+listed in `failed_iids.json`), which exist as portability evidence rather than as a
+second set of results. Their composition follows the same schema and is inventoried
+in the dataset repository's `RELEASE_MANIFEST.md`. A third directory,
+`embeddings/ml1m/`, is a re-indexing of the ML-20M profiles onto the MovieLens 1M
+item set (2,807 rows, 19 of them all-zero where no ML-20M profile maps) and not a
+separate generation.
+
 ## Motivation
 
 **For what purpose was the dataset created?**
@@ -19,7 +30,8 @@ Minastik Technology JSC funded this work in full, including the LLM API costs (~
 Each instance is a movie with:
 - An LLM-generated semantic profile (80–120 words requested; realised 95–135, median 115)
 - A 10-axis continuous mood vector
-- 3 key discriminative themes
+- 3-6 key discriminative themes - 3-5 are requested and the realised counts are
+  3 for 6,688 records, 4 for 2,857, 5 for 832 and 6 for four of them
 - Pre-computed embeddings (1024-dim profile, 10-dim mood, 528-dim themes)
 
 **How many instances are there in total?**
@@ -34,7 +46,8 @@ It covers all 10,381 movies in MovieLens 20M that have genome tag annotations. T
 - `genres`: Pipe-separated genre labels from MovieLens
 - `profile_text`: LLM-generated 80-120 word semantic description
 - `mood_vector`: 10 float values in [0, 1] representing mood axes
-- `key_themes`: 3 string labels identifying dominant themes
+- `key_themes`: 3-6 string labels identifying dominant themes. **Variable length** -
+  35.6% of ML-20M records carry more than three, so do not unpack to a fixed 3
 
 **Is there a label or target associated with each instance?**
 No explicit labels. The profiles are features, not targets. Evaluation is performed using user interaction data from MovieLens 20M.
