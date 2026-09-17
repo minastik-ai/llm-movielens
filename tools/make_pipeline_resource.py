@@ -1,3 +1,8 @@
+"""Draw Figure 1, the three-stage pipeline diagram, as a vector PDF.
+
+Regenerates figures/pipeline_resource.pdf from the layout in this file, so
+the figure in the paper and the one in the release come from one source.
+"""
 import pathlib
 import matplotlib
 matplotlib.use("Agg")

@@ -44,7 +44,8 @@ It covers all 10,381 movies in MovieLens 20M that have genome tag annotations. T
 - `movieId`: Integer identifier from MovieLens 20M
 - `title`: Movie title with release year (e.g., "Toy Story (1995)")
 - `genres`: Pipe-separated genre labels from MovieLens
-- `profile_text`: LLM-generated 80-120 word semantic description
+- `profile_text`: LLM-generated semantic description - 80-120 words requested,
+  95-135 realised (see the realised distribution below)
 - `mood_vector`: 10 float values in [0, 1] representing mood axes
 - `key_themes`: 3-6 string labels identifying dominant themes. **Variable length** -
   35.6% of ML-20M records carry more than three, so do not unpack to a fixed 3

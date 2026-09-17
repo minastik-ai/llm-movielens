@@ -99,7 +99,9 @@ python3 scripts/download_artifacts.py
 # 2. Encode them
 python3 src/embedding_generator/main.py
 
-# 3. Evaluate: fourteen configurations x five seeds, temporal split, full ranking
+# 3. Evaluate: fourteen configurations x five seeds, temporal split, full ranking.
+# 70 runs, about 24 hours on one A100; 8 GB is enough but slower. docs/REPRODUCIBILITY.md
+# has the table, and --config M4 runs one configuration instead of all fourteen.
 bash scripts/reproduce_all.sh --dry-run                      # print the plan
 bash scripts/reproduce_all.sh
 ```

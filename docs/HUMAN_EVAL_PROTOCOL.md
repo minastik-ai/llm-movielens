@@ -123,8 +123,9 @@ This is done for all 10 mood axes per pair = 1,000 judgments per annotator. Expe
 
 For each movie, you receive:
 1. **Title and year** (e.g., "Toy Story (1995)")
-2. **Two generated profiles** — one per system, each an 80-120 word semantic
-   description, in the columns `claude_profile_text` and `gpt4o_profile_text`
+2. **Two generated profiles** — one per system, each a short semantic
+   description (95-135 words in this corpus), in the columns
+   `claude_profile_text` and `gpt4o_profile_text`
 3. **TMDb reference** — a brief official plot summary for fact-checking
 4. **Mood vector** — 10 numerical values (0-1) describing the movie's tone
 
