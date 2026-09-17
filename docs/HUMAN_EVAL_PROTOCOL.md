@@ -281,7 +281,7 @@ columns per system, then `notes` and `primary_genre`:
 | 1 | 1 | Toy Story (1995) | … | … | 5 | … | 4 | | other |
 
 The five axis names repeat under each system prefix, so there are ten rating
-columns: `claude_*` and `gpt4o_*` for thematic_accuracy, discriminativeness,
+columns: `profile_a_*` and `profile_b_*` for thematic_accuracy, discriminativeness,
 rule_compliance, factual_consistency and coherence_fluency.
 
 The `notes` column is optional — annotators can record edge cases or justifications for borderline ratings.
