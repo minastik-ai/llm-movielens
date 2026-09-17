@@ -41,14 +41,26 @@ Each instance is a movie with:
 It covers all 10,381 movies in MovieLens 20M that have genome tag annotations. This represents ~38% of movies but ~99% of all ratings in the dataset.
 
 **What data does each instance consist of?**
+These are the keys the shipped file actually has, not the schema the pipeline
+works with internally:
+
 - `movieId`: Integer identifier from MovieLens 20M
-- `title`: Movie title with release year (e.g., "Toy Story (1995)")
-- `genres`: Pipe-separated genre labels from MovieLens
-- `profile_text`: LLM-generated semantic description - 80-120 words requested,
+- `title`: Movie title, year stripped (e.g., `"Toy Story"`)
+- `profile`: LLM-generated semantic description - 80-120 words requested,
   95-135 realised (see the realised distribution below)
+- `word_count`: the realised length of `profile`, so the distribution above can be
+  re-derived without re-tokenising
 - `mood_vector`: 10 float values in [0, 1] representing mood axes
 - `key_themes`: 3-6 string labels identifying dominant themes. **Variable length** -
   35.6% of ML-20M records carry more than three, so do not unpack to a fixed 3
+
+**There is no `genres` field**, and there is no other MovieLens-derived content:
+genre strings are upstream data this release does not redistribute, and
+`RELEASE_MANIFEST.md` records where the raw multi-label string is dropped. The
+Croissant record in `metadata/croissant.json` declares the same keys.
+
+The parallel Amazon-Books file (`profiles/amazon_books_2018/...`) carries the same
+generated fields with `asin` and `itemId` in place of `movieId`.
 
 **Is there a label or target associated with each instance?**
 No explicit labels. The profiles are features, not targets. Evaluation is performed using user interaction data from MovieLens 20M.

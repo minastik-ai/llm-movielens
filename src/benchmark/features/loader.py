@@ -46,8 +46,25 @@ class FeatureLoader:
             "bert_title": BERT_TITLE_EMB_NPY,
         }
 
-        # Load embedding movie ID index (genome order)
+        # Load embedding movie ID index (genome order).
+        # The paper prints `EMBEDDING_DIR=output/my-encoder python3 run_experiment.py`
+        # as the way to evaluate a new encoder without writing code, so this is where
+        # a reader following that recipe arrives -- and it used to be a bare
+        # FileNotFoundError naming one file, with no statement of what the directory
+        # is supposed to contain.
         movie_id_index_path = self.embedding_dir / "movie_id_index.json"
+        if not movie_id_index_path.exists():
+            need = "\n".join(f"    {n}" for n in
+                              ("movie_id_index.json", "profile_embeddings.npy",
+                               "mood_vectors.npy", "theme_matrix.npy"))
+            raise SystemExit(
+                f"No feature index at {movie_id_index_path}.\n\n"
+                f"EMBEDDING_DIR is {self.embedding_dir}, and a feature directory must\n"
+                f"hold at least:\n{need}\n\n"
+                "Fetch the ones we released:  python3 scripts/download_artifacts.py\n"
+                "or encode your own:          python3 src/embedding_generator/main.py\n"
+                "Vectors must be in the catalogue's index order, which movie_id_index.json\n"
+                "declares -- see the extension section of the paper.")
         with open(movie_id_index_path) as f:
             genome_ids = json.load(f)
         self.genome_id_to_idx = {mid: i for i, mid in enumerate(genome_ids)}
