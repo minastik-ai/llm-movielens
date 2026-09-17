@@ -57,7 +57,7 @@ No encoding needed — these are direct numeric features usable as-is in any mod
 
 ### C. Key Themes (528-dim multi-hot)
 
-Each movie has 3-5 LLM-generated themes (e.g., "redemption", "obsession", "identity"). These are encoded as a multi-hot vector over a filtered vocabulary.
+Each movie has 3-6 LLM-generated themes (3-5 are requested; 36% of records carry more than three) (e.g., "redemption", "obsession", "identity"). These are encoded as a multi-hot vector over a filtered vocabulary.
 
 - **Raw vocabulary:** 9,183 unique themes
 - **After filtering (count >= 10):** 528 themes

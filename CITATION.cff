@@ -30,8 +30,8 @@ license: CC-BY-4.0
 license-url: "https://creativecommons.org/licenses/by/4.0/"
 abstract: >-
   Pipeline and evaluation harness for LLM-synthesized item profiles. A language
-  model reads an item's structured metadata and writes an 80-120 word profile, a
-  10-axis mood vector and 3-5 key themes; the harness evaluates whether the
+  model reads an item's structured metadata and writes a profile of 80-120
+  requested words (95-135 realised), a 10-axis mood vector and 3-6 key themes; the harness evaluates whether the
   resulting representation outperforms the structured description consumed
   directly, under a temporal split, five seeds and full ranking. Code and
   annotations are CC BY 4.0; the generated profiles and their embeddings are
