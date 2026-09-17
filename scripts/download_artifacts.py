@@ -9,6 +9,9 @@ does exactly this for the source data; this is the same thing for the parts we m
 
 Idempotent: a file already present is left alone, so re-running costs nothing.
 
+About 190 MB over the wire, and roughly twice that on disk: `hf_hub_download` keeps
+its own copy under ~/.cache/huggingface and this copies from there into place.
+
     python3 scripts/download_artifacts.py              # profiles + bge embeddings
     python3 scripts/download_artifacts.py --dry-run    # show the plan, fetch nothing
     python3 scripts/download_artifacts.py --encoder e5-large-v2
@@ -35,6 +38,25 @@ def plan(encoder: str) -> list[tuple[str, Path]]:
     return items
 
 
+def sizes(repo_id: str) -> dict:
+    """Byte size per file, from the hub. Empty when offline or unavailable.
+
+    Printed rather than assumed: the one thing a reader wants before starting a
+    download is how big it is, and a number hard-coded here would drift the first
+    time an artifact is regenerated.
+    """
+    try:
+        from huggingface_hub import HfApi
+        info = HfApi().repo_info(repo_id, repo_type="dataset", files_metadata=True)
+        return {s.rfilename: s.size for s in info.siblings if s.size}
+    except Exception:
+        return {}
+
+
+def human(n: int) -> str:
+    return f"{n/1e6:,.1f} MB" if n >= 1e6 else f"{n/1e3:,.0f} KB"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--encoder", default="bge-large-en-v1.5",
@@ -51,9 +73,17 @@ def main() -> int:
     print(f"  repository: {a.repo_id}")
     print(f"  {len(items)} file(s) in the plan; {len(have)} already present, "
           f"{len(need)} to fetch")
+    size = sizes(a.repo_id) if not a.repo_id.startswith("[") else {}
     for s, d in items:
-        print(f"   {'have' if d.exists() else 'FETCH':>5}  {s}")
+        tag = f"  {human(size[s])}" if s in size else ""
+        print(f"   {'have' if d.exists() else 'FETCH':>5}  {s}{tag}")
         print(f"          -> {d.relative_to(ROOT)}")
+    if size:
+        todo = sum(size.get(s, 0) for s, _ in need)
+        print(f"\n  {human(todo)} to fetch, about twice that on disk: "
+              f"huggingface_hub caches its own copy under ~/.cache/huggingface")
+    else:
+        print("\n  (file sizes unavailable -- expect about 190 MB, twice that on disk)")
     if a.dry_run:
         print("\n  dry run: nothing fetched.")
         return 0
@@ -76,8 +106,11 @@ def main() -> int:
         got = hf_hub_download(repo_id=a.repo_id, filename=src, repo_type="dataset")
         shutil.copyfile(got, dst)
         print(f"   fetched {src}")
-    print(f"\n  {len(need)} file(s) fetched. You can now run "
-          f"`bash scripts/reproduce_all.sh`.")
+    print(f"\n  {len(need)} file(s) fetched. Two steps still stand between this and a\n"
+          f"  benchmark run -- the source data is not ours to redistribute:\n"
+          f"    bash scripts/download_ml20m.sh\n"
+          f"    python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m\n"
+          f"    bash scripts/reproduce_all.sh")
     return 0
 
 

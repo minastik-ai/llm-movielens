@@ -38,7 +38,10 @@ elif [ -n "$TIER_FILTER" ]; then
     case $TIER_FILTER in
         1) CONFIGS=("${TIER1[@]}") ;;
         2) CONFIGS=("${TIER2[@]}") ;;
-        *) echo "Invalid tier: $TIER_FILTER (use 1, 2, or 3)" >&2; exit 1 ;;
+        3) echo "There is no tier 3 in this release: the R2/R3 replacer configurations" >&2
+           echo "are not reported here and their per-seed results are not staged." >&2
+           exit 1 ;;
+        *) echo "Invalid tier: $TIER_FILTER (use 1 or 2)" >&2; exit 1 ;;
     esac
 else
     CONFIGS=("${TIER1[@]}" "${TIER2[@]}")
@@ -62,7 +65,7 @@ if [ -z "$BENCH_DIR" ]; then
 fi
 
 # Preflight. Without this the run reaches the first experiment, raises a bare
-# FileNotFoundError deep in the loader, and repeats that traceback 80 times -- once
+# FileNotFoundError deep in the loader, and repeats that traceback 70 times -- once
 # per experiment -- because the loop treats every failure as a per-experiment error.
 # Say what is missing, once, before starting.
 # Skipped for --dry-run, which must work with no data at all -- that is its purpose,
@@ -75,11 +78,34 @@ if [ "$DRY_RUN" != true ] && [ ! -f "$DATA_DIR/train.csv" ]; then
   echo "splits from your own download first:" >&2
   echo "" >&2
   echo "  bash scripts/download_ml20m.sh" >&2
-  echo "  python3 tools/rebuild_splits.py --ml20m-dir data/ml-20m" >&2
+  echo "  python3 scripts/download_artifacts.py      # the profiles set the item universe" >&2
+  echo "  python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m" >&2
   echo "" >&2
   echo "Then re-run this script. Use --dry-run to list the 70 experiments without" >&2
   echo "needing any data." >&2
   exit 1
+fi
+
+# The same argument for the features. Without this the run reaches the first
+# experiment and dies on a bare FileNotFoundError inside the feature loader, once
+# per experiment. Ask the benchmark itself where it will look, so this cannot
+# disagree with config.py the way the data path once did.
+if [ "$DRY_RUN" != true ]; then
+  EMB_DIR="$(cd "$BENCH_DIR" && python3 -c 'import config; print(config.EMBEDDING_DIR)' 2>/dev/null || true)"
+  if [ -n "$EMB_DIR" ] && [ ! -f "$EMB_DIR/movie_id_index.json" ]; then
+    echo "Missing the encoded features: $EMB_DIR/movie_id_index.json" >&2
+    echo "" >&2
+    echo "Either fetch the ones we released (~190 MB, no GPU, no API key):" >&2
+    echo "" >&2
+    echo "  python3 scripts/download_artifacts.py" >&2
+    echo "" >&2
+    echo "or encode your own profiles first:" >&2
+    echo "" >&2
+    echo "  python3 src/embedding_generator/main.py" >&2
+    echo "" >&2
+    echo "Set EMBEDDING_DIR to use a different encoder's output." >&2
+    exit 1
+  fi
 fi
 
 START_TIME=$(date +%s)
@@ -89,7 +115,7 @@ for config in "${CONFIGS[@]}"; do
         CURRENT=$((CURRENT + 1))
         # Run the entry point directly. The previous form invoked
         # `python -m llm_movielens.benchmark.run_experiment`, a package that does
-        # not exist in the release, so every one of the 80 experiments failed with
+        # not exist in the release, so every one of the 70 experiments failed with
         # ModuleNotFoundError. run_experiment.py imports its siblings flatly
         # (`from data.dataset import ...`), so it is invoked from its own directory.
         CMD="python3 ${BENCH_DIR}/run_experiment.py --config ${config} --seed ${seed}"

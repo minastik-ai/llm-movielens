@@ -31,19 +31,29 @@ Skip stages 1-2 and use our pre-computed embeddings from HuggingFace.
 # 1. Fetch MovieLens 20M under its own terms (we do not redistribute it)
 bash scripts/download_ml20m.sh
 
-# 2. Rebuild the temporal splits, SHA-256-checked against ours
-python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m
-
-# 2b. Fetch the profiles and embeddings we generated, so stages 1-2 can be skipped
+# 2. Fetch the profiles and embeddings we generated, so stages 1-2 can be skipped
+#    (~190 MB, and about twice that on disk once huggingface_hub has cached it)
 python3 scripts/download_artifacts.py
+
+# 2b. Rebuild the temporal splits, SHA-256-checked against ours. This reads the
+#     item universe off the profiles, so it has to come after step 2.
+python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m
 
 # 3. Run all experiments (14 configurations × 5 seeds = 70 runs)
 bash scripts/reproduce_all.sh --dry-run   # print the plan first; needs no data
 bash scripts/reproduce_all.sh
 
-# 4. Generate the results table
-python3 scripts/export_results_table.py
+# 4. Generate the results table FROM YOUR OWN RUN. Your results land inside the
+#    benchmark package, not in the shipped results/ tree -- that one holds the
+#    per-seed files the paper's numbers come from and is left untouched, so the
+#    two can be compared rather than one quietly overwriting the other.
+python3 scripts/export_results_table.py --results-dir src/benchmark/results
 ```
+
+`tools/verify_paper_numbers.py` always reads the **shipped** `results/`: its job is
+to check that the paper agrees with what was released, which is a different question
+from whether your re-run agrees with the paper. For that, compare the table step 4
+writes against the expected values below.
 
 ### Expected Results
 

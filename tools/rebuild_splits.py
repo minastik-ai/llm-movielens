@@ -14,8 +14,14 @@ recorded when the paper's results were produced, so you can confirm you are
 evaluating on precisely the data we evaluated on — a stronger guarantee than
 downloading a CSV from us and trusting it.
 
+IT NEEDS THE PROFILES TOO. The item universe is read off the released profiles,
+so this runs AFTER `scripts/download_artifacts.py` (or after you generate your own),
+not before it. Both defaults below resolve against this repository, not against your
+working directory, so the splits land where the benchmark reads them.
+
     1. Get ML-20M from https://grouplens.org/datasets/movielens/20m/
-    2. python rebuild_splits.py --ml20m-dir /path/to/ml-20m --out data/processed
+    2. python3 scripts/download_artifacts.py          # or generate your own profiles
+    3. python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m
 
 Requires: pandas. No network access, no API keys, no GPU. Runs in ~2 minutes.
 """
@@ -26,6 +32,54 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+
+# --- Where things are. Found by SHAPE, never by a sibling path: a literal path to
+# --- the author's machine is dead code in a clone, and the defaults here are the
+# --- ones a reader gets when they follow the README without thinking about paths.
+HERE = Path(__file__).resolve()
+_LAYOUTS = ("src", "code")          # released tree, development tree
+
+
+def _repo_root() -> Path:
+    for base in HERE.parents:
+        if any((base / lay / "benchmark").is_dir() for lay in _LAYOUTS):
+            return base
+    return HERE.parents[1]
+
+
+ROOT = _repo_root()
+_LAY = next((lay for lay in _LAYOUTS if (ROOT / lay / "benchmark").is_dir()), "src")
+
+# The benchmark reads its splits from inside its own package (benchmark/config.py
+# resolves DATA_DIR against that directory, not against the repository root). The
+# default used to be `data/processed` relative to the CURRENT DIRECTORY, so anyone
+# who ran the README's command from the repository root wrote the splits to a
+# directory nothing reads, and reproduce_all.sh then reported them missing.
+DEFAULT_OUT = ROOT / _LAY / "benchmark" / "data" / "processed"
+
+# The profiles define the item universe. The default used to be the path they have
+# INSIDE THE DATA REPOSITORY, which exists in neither a fresh clone nor after
+# download_artifacts.py -- so the second command in the README died on a bare
+# FileNotFoundError with nothing to act on.
+PROFILE_CANDIDATES = [
+    ROOT / _LAY / "profile_generator" / "output" / "movie_profiles.json",
+    Path("profiles/ml20m/claude-haiku-4-5/movie_profiles.json"),
+]
+
+
+def resolve_profiles(given):
+    if given is not None:
+        return given
+    for c in PROFILE_CANDIDATES:
+        if c.exists():
+            return c
+    sys.exit(
+        "ERROR: no profiles file found, and the item universe is read from it.\n"
+        "Looked in:\n" + "".join(f"  {c}\n" for c in PROFILE_CANDIDATES) +
+        "\nFetch the ones we released (188 MB, no API key):\n"
+        "  python3 scripts/download_artifacts.py\n"
+        "or point at your own with --profiles.")
+
 
 # --- Protocol constants. These define the benchmark; do not change them if you
 # --- intend your numbers to be comparable with the paper's. -----------------
@@ -201,15 +255,18 @@ if __name__ == "__main__":
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--ml20m-dir", required=True, type=Path,
                     help="directory of your own extracted ml-20m download")
-    ap.add_argument("--profiles", type=Path,
-                    default=Path("profiles/ml20m/claude-haiku-4-5/movie_profiles.json"),
-                    help="released profiles, used to define the item universe")
-    ap.add_argument("--out", type=Path, default=Path("data/processed"))
+    ap.add_argument("--profiles", type=Path, default=None,
+                    help="released profiles, used to define the item universe "
+                         f"(default: {PROFILE_CANDIDATES[0]})")
+    ap.add_argument("--out", type=Path, default=None,
+                    help=f"where to write the splits (default: {DEFAULT_OUT} -- "
+                         "the directory the benchmark reads)")
     ap.add_argument("--no-verify", action="store_true")
     a = ap.parse_args()
 
     log("rebuilding LLM-MovieLens benchmark splits")
-    stats = build(a.ml20m_dir, a.profiles, a.out)
+    out = a.out if a.out is not None else DEFAULT_OUT
+    stats = build(a.ml20m_dir, resolve_profiles(a.profiles), out)
     if a.no_verify:
         sys.exit(0)
-    sys.exit(0 if verify(a.out, stats) else 1)
+    sys.exit(0 if verify(out, stats) else 1)

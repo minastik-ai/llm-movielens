@@ -30,6 +30,7 @@ The fastest way to see whether this resource is what it claims is to recompute t
 paper's numbers yourself. It needs no GPU, no model download and no API key.
 
 ```bash
+python3 --version              # 3.10 or newer
 pip install -r requirements.txt
 python3 tools/verify_paper_numbers.py
 ```
@@ -86,18 +87,21 @@ bge-large and not significant under e5-large.
 ```bash
 # 0. Source data. We do not redistribute it; you fetch it under its own terms.
 bash scripts/download_ml20m.sh
-python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m   # deterministic, SHA-256-checked against ours
 
 # 1. Generate profiles (needs ANTHROPIC_API_KEY). ~$21 via the Batches API.
 python3 src/profile_generator/batch_generate.py --dry-run   # inspect first, costs nothing
 python3 src/profile_generator/batch_generate.py
 
-# 1-2 (alternative). Skip both stages: fetch what we already generated.
-python3 scripts/download_artifacts.py --dry-run   # show what lands where
+# 1-2 (alternative). Skip both stages: fetch what we already generated. ~190 MB.
+python3 scripts/download_artifacts.py --dry-run   # show what lands where, and how big
 python3 scripts/download_artifacts.py
 
-# 2. Encode them
+# 2. Encode them (skip if you took the alternative above)
 python3 src/embedding_generator/main.py
+
+# 2b. Splits. AFTER the profiles exist -- the item universe is read off them, so
+# this cannot run before step 1 or its alternative.
+python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m   # deterministic, SHA-256-checked against ours
 
 # 3. Evaluate: fourteen configurations x five seeds, temporal split, full ranking.
 # 70 runs, about 24 hours on one A100; 8 GB is enough but slower. docs/REPRODUCIBILITY.md
