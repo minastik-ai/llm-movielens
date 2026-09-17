@@ -79,8 +79,8 @@ def main() -> int:
         print(f"   {'have' if d.exists() else 'FETCH':>5}  {s}{tag}")
         print(f"          -> {d.relative_to(ROOT)}")
     if size:
-        todo = sum(size.get(s, 0) for s, _ in need)
-        print(f"\n  {human(todo)} to fetch, about twice that on disk: "
+        n_bytes = sum(size.get(s, 0) for s, _ in need)
+        print(f"\n  {human(n_bytes)} to fetch, about twice that on disk: "
               f"huggingface_hub caches its own copy under ~/.cache/huggingface")
     else:
         print("\n  (file sizes unavailable -- expect about 190 MB, twice that on disk)")
