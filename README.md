@@ -108,8 +108,8 @@ Every stage is skippable: the released artifacts let you enter at stage 2 or 3
 without an API key or a GPU-hour.
 
 **Extending it is a path override, not a fork.** A new sentence encoder, generating
-model, catalogue or method plugs in by pointing the configuration at a different
-path; the harness runs whatever feature it is given through the same temporal split,
+model or prompt plugs in by pointing the configuration at a different path — a new
+model architecture is a class plus a branch in `build_model`, not a path; the harness runs whatever feature it is given through the same temporal split,
 five seeds and full-ranking protocol.
 
 ## What is deliberately not in here
