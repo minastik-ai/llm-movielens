@@ -101,12 +101,21 @@ def load() -> tuple[list[int], dict, dict, dict]:
 def build_annotator_sheet(ids, claude, gpt, meta) -> None:
     # Columns: context + two profile blocks + per-profile per-axis rating cells
     # + notes.
+    # BLINDED COLUMN NAMES. Annotators must not be able to tell which model wrote
+    # which profile, so the sheet names the two columns by letter and never by
+    # model. The mapping is written to a separate key file that annotators do not
+    # receive. It was previously applied by hand between generating this sheet and
+    # issuing it, which left no trace in the artifact and made the shipped sheet
+    # look unblinded to anyone auditing it.
+    #
+    # The mapping is FIXED across rows: profile_a is the same model on every row.
+    # That blinds model identity, not column position -- see ORDER below.
     header = [
         "eval_id", "movieId", "title", "genres", "primary_genre",
-        "claude_profile_text",
-        "gpt4o_profile_text",
+        "profile_a_text",
+        "profile_b_text",
     ]
-    for prefix in ("claude", "gpt4o"):
+    for prefix in ("profile_a", "profile_b"):
         for ax in QUALITY_AXES:
             header.append(f"{prefix}_{ax}")  # 1-5 Likert, blank for annotator
     header.append("notes")
@@ -126,8 +135,23 @@ def build_annotator_sheet(ids, claude, gpt, meta) -> None:
             row.extend([""] * (len(QUALITY_AXES) * 2))  # Likert cells blank
             row.append("")  # notes
             w.writerow(row)
+    # The decode, kept beside the sheet and withheld from annotators.
+    key_path = OUT_PROFILES.with_name("annotator_sheet_key.json")
+    key_path.write_text(json.dumps({
+        "_what": "Which generating model each blinded column holds.",
+        "_why": ("Annotators receive the sheet with columns named profile_a / "
+                 "profile_b and never see a model name. This key is the decode, "
+                 "published separately so the sheet as issued and the mapping "
+                 "needed to analyse it are both available."),
+        "_order": ("The mapping is FIXED across all rows: profile_a is the same "
+                   "model on every row. Model identity is therefore blinded; "
+                   "column position is not randomised."),
+        "mapping": {"profile_a": "claude-haiku-4-5", "profile_b": "gpt-4o-mini"},
+        "rows": len(ids),
+        "axes": list(QUALITY_AXES),
+    }, indent=2) + "\n")
     print(f"Wrote {OUT_PROFILES.relative_to(REPO)}  ({len(ids)} rows, "
-          f"{len(header)} columns)")
+          f"{len(header)} columns, blinded) and {key_path.name}")
 
 
 # ---------------------------------------------------------------------------

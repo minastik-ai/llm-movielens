@@ -125,15 +125,15 @@ For each movie, you receive:
 1. **Title and year** (e.g., "Toy Story (1995)")
 2. **Two generated profiles** — one per system, each a short semantic
    description (95-135 words in this corpus), in the columns
-   `claude_profile_text` and `gpt4o_profile_text`
+   `profile_a_text` and `profile_b_text` --- you are not told which model wrote
+   which, and you do not need to know
 3. **TMDb reference** — a brief official plot summary for fact-checking
 4. **Mood vector** — 10 numerical values (0-1) describing the movie's tone
 
 ### What You Rate
 
 Rate **each of the two profiles** on the same 5 axes using a 1-5 scale — ten
-ratings per movie. The comparison is not blinded: the columns are labelled by
-system, and the paper states that limitation rather than claiming otherwise.
+ratings per movie. The comparison is blinded to model identity: the columns are named `profile_a` and `profile_b`, and the mapping is applied by the script and held in `annotator_sheet_key.json`, which annotators do not receive. The mapping is fixed across rows, so identity is blinded and column order is not randomised.
 
 ---
 
@@ -276,7 +276,7 @@ Each annotator fills in one spreadsheet with these columns:
 `eval_id`, `movieId`, `title`, then the two profile texts, then five rating
 columns per system, then `notes` and `primary_genre`:
 
-| eval_id | movieId | title | claude_profile_text | gpt4o_profile_text | claude_thematic_accuracy | … | gpt4o_coherence_fluency | notes | primary_genre |
+| eval_id | movieId | title | profile_a_text | profile_b_text | profile_a_thematic_accuracy | … | profile_b_coherence_fluency | notes | primary_genre |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | 1 | Toy Story (1995) | … | … | 5 | … | 4 | | other |
 

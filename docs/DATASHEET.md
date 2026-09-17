@@ -202,7 +202,8 @@ their catalogue sits on.
 
 Three exposures we can name but not quantify: profiles are English-only, written by
 an English-centric model over a catalogue whose composition skews Western; the three
-annotators were not demographically sampled and were not blinded to model identity;
+annotators were not demographically sampled, and the blinded columns kept a
+fixed order rather than a randomised one;
 and the ten mood axes are researcher-chosen bipolar scales encoding one framing of
 how items differ. Source record: `src/fairness_audit.json`.
 
