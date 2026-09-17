@@ -215,7 +215,14 @@ def main():
 
     # Load features
     feature_names = FEATURE_CONFIGS[args.features]
-    feature_loader = FeatureLoader(data_dir=data_dir, embedding_dir=embedding_dir)
+    # Only when the config actually uses features. M0 and M1 are the pure
+    # collaborative baselines -- feature_names is [] -- and constructing the
+    # loader regardless made them read movie_id_index.json and the embedding
+    # arrays they never touch. A reviewer running the cheapest, most obvious
+    # first config had to download 566 MB to train an ID-only model, and the
+    # guard the next line already applies says the code knew better.
+    feature_loader = (FeatureLoader(data_dir=data_dir, embedding_dir=embedding_dir)
+                      if feature_names else None)
     feature_dim = feature_loader.get_feature_dim(feature_names) if feature_names else 0
     logger.info(f"Features: {args.features} → {feature_names} (dim={feature_dim})")
 

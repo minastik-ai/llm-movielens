@@ -271,7 +271,7 @@ def main():
         if obj is None:
             return iid, None, user_prompt
         # Override the model's self-reported count with the real one, as the
-        # primary ML-20M pipeline does (profile_generator.py line ~130). Models
+        # primary ML-20M pipeline does (generator.py line ~130). Models
         # overstate it by ~8 words, and a released field that disagrees with its
         # own text is a defect a reviewer can find by counting.
         obj["word_count"] = len(obj["profile"].split())

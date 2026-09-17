@@ -204,4 +204,4 @@ The BERT title baseline is generated separately via `../benchmark/features/bert_
 
 - Python 3.10+
 - sentence-transformers >= 2.2.0
-- numpy, pandas, scikit-learn, tqdm
+- numpy, pandas, scikit-learn

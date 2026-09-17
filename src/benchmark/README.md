@@ -418,7 +418,7 @@ results<suffix>/analysis/                              # NON-per-config: cold_st
   - **M-configs (all datasets) + R2 (KAR) + R3 (HypernetReplacer) + gpt4omini m4/m7** —
     `python3 eval_checkpoints.py [--dataset amazon|ml1m|ml20m_sub163|ml20m_gpt4omini] [--configs ...]`
     (project models; via the shared `evaluate_model`).
-  - `materialize_perseed_leaves.py` (aggregate→thin-leaf backfill) is retained as a fallback, but is
+  - `materialize_per_seed_leaves.py` (aggregate→thin-leaf backfill) is retained as a fallback, but is
     currently a no-op — all configs now have rich re-eval leaves.
 
 ## How to Run

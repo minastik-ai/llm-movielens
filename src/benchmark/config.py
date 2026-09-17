@@ -114,7 +114,11 @@ FEATURE_CONFIGS = {
 }
 
 # Mapping from (model, features) to paper experiment label (used for output paths).
-# Output folders are laid out as: {checkpoints|results}/{encoder}/{config}-seed-{seed}/
+# Output folders are laid out as: {checkpoints|results}/{config}/{encoder}/seed-{seed}/
+# -- config first, which keeps every encoder variant of a config adjacent. This
+# comment described {encoder}/{config}-seed-{seed}, a layout that has not existed
+# for some time; experiment_path() below is the authority and the shipped
+# results/ tree agrees with it, so the comment was the only thing saying otherwise.
 CONFIG_NAME_MAP = {
     ("bpr_mf",      "none"):          "M0",
     ("lightgcn",    "none"):          "M1",
@@ -175,8 +179,7 @@ def experiment_path(model: str, features: str, seed: int, embedding_dir) -> str:
     Example: m4/bge-large-en-v1.5/seed-42
 
     This config-first layout keeps all encoder variants of a given config
-    adjacent on disk, which simplifies encoder-sensitivity analysis — the
-    central research question in §6.4 of the paper.
+    adjacent on disk, which simplifies encoder-sensitivity analysis.
     """
     cfg = get_config_name(model, features).lower()
     enc = get_encoder_name(embedding_dir)

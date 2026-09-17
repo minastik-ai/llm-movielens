@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Experiment A for §3.5: zero-shot controllable retrieval via mood-axis offset.
+"""Experiment A for §7 (Mood as a Controllable-Retrieval Primitive): zero-shot
+controllable retrieval via mood-axis offset.
 
 For 100 query items spanning genres, generate two retrieval lists:
   L1 = top-10 nearest neighbors in profile-embedding space (standard)

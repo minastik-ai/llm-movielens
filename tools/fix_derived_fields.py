@@ -6,7 +6,7 @@ both must agree with it, and in three of the four released files they do not:
 
   word_count  the model reports its own length and overstates it (median +4 to
               +8 words). The PRIMARY ML-20M pipeline overrides it with
-              len(profile.split()) at generation time (profile_generator.py
+              len(profile.split()) at generation time (generator.py
               ~line 130); the book runner and the GPT-4o-mini run do not.
   movieId /   should equal the JSON key. GPT-4o-mini echoed the few-shot
   itemId      example's id (99997) into all 10,381 of its records.

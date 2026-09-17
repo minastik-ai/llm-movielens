@@ -28,7 +28,7 @@ FOUR MEASUREMENTS, cheapest first:
      collapse toward each other, the metadata alone cannot separate the catalogue,
      which is a finding about Steam rather than about the method.
 
-Usage:  python analyse_steam_arms.py [--embed]     (--embed adds 3 and 4)
+Usage:  python analyze_steam_arms.py [--embed]     (--embed adds 3 and 4)
 """
 import argparse, json, re, statistics as st, sys
 from pathlib import Path

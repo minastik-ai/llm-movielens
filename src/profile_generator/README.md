@@ -233,7 +233,7 @@ llm-movie-profiler/
 │   └── settings.py          # All configuration: prompts, API params, mood axes, paths
 ├── data_loader.py           # ML-20M data loading & top-30 genome tag extraction
 ├── tmdb_crawler.py          # Async TMDb API crawler with disk caching
-├── profile_generator.py     # Claude API client with prompt caching, validation, checkpointing
+├── generator.py     # Claude API client with prompt caching, validation, checkpointing
 ├── requirements.txt         # Pinned Python dependencies
 ├── data/
 │   └── ml-20m/              # Place ML-20M CSV files here (6 files)
@@ -300,7 +300,7 @@ The examples below are real; the scope they implied was not:**
 
 **Why retries didn't help:** The same movie + same prompt = same confusion. Haiku consistently made this mistake for these specific titles across all 3 retry attempts.
 
-**Fix applied in `profile_generator.py`:** Since we already override `movieId` with the correct value after parsing, a regex pre-processor replaces whatever the model put in the `movieId` field with the correct integer *before* JSON parsing:
+**Fix applied in `generator.py`:** Since we already override `movieId` with the correct value after parsing, a regex pre-processor replaces whatever the model put in the `movieId` field with the correct integer *before* JSON parsing:
 
 ```python
 text = re.sub(r'"movieId"\s*:\s*[^,}\]]+', f'"movieId": {movie_id}', text, count=1)

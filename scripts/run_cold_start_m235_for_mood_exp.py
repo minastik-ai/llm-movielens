@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Experiment B for the §3.5 mood reframe: cold-start eval for M2 (genome PCA-128d),
+"""Experiment B for §7 (Mood as a Controllable-Retrieval Primitive): cold-start
+eval for M2 (genome PCA-128d),
 M3 (BERT-title 1024d), M5 (mood-only 10d) across 5 seeds, mirroring the existing
 M1/M4/M7 protocol in scripts/run_cold_start_5seeds.py.
 

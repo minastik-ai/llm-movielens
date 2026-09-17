@@ -68,7 +68,7 @@ from config.settings import (  # noqa: E402
 )
 from data_loader import load_all_data  # noqa: E402
 from tmdb_crawler import load_cache  # noqa: E402
-from profile_generator import validate_profile_json, load_existing_profiles  # noqa: E402
+from generator import validate_profile_json, load_existing_profiles  # noqa: E402
 from main import prepare_movie_data  # noqa: E402
 
 CHUNK = 2_500           # ~20MB/submit; 10k in one POST caused APIConnectionError

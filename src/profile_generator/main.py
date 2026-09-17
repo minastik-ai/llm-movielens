@@ -58,7 +58,7 @@ from config.settings import (
 )
 from data_loader import load_all_data, format_genome_tags_for_prompt
 from tmdb_crawler import load_cache, crawl_tmdb_batch, get_metadata_for_movie
-from profile_generator import (
+from generator import (
     ProfileGenerator, build_user_prompt, load_existing_profiles,
 )
 

@@ -11,8 +11,8 @@ pmixer-sequential) that emit config-level aggregates rather than the per-seed
 leaves are a derived view for structural parity with the M-configs. NEVER overwrites
 existing real leaves; no re-evaluation (uses the canonical per-seed verbatim).
 
-    python3 materialize_perseed_leaves.py            # r2/r3 (all datasets) + base SASRec
-    python3 materialize_perseed_leaves.py --check     # report only (no writes)
+    python3 materialize_per_seed_leaves.py            # r2/r3 (all datasets) + base SASRec
+    python3 materialize_per_seed_leaves.py --check     # report only (no writes)
 """
 from __future__ import annotations
 import json

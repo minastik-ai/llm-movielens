@@ -16,8 +16,8 @@ PROJECT_ROOT = Path(__file__).parent.parent
 # Raw MovieLens. In the generation tree this sits under the generator; in the
 # released layout scripts/download_ml20m.sh writes <repo>/data/raw/ml-20m
 # instead, so resolve in the order a reader will actually have it and honour the
-# same ML20M_DIR override the benchmark uses (§12.21 -- one dataset had four
-# different hard-coded locations across the packages that read it).
+# same ML20M_DIR override the benchmark uses. One dataset once had four
+# different hard-coded locations across the packages that read it.
 _ML20M = [PROJECT_ROOT.parent.parent / "data" / "raw" / "ml-20m",  # download_ml20m.sh
           PROJECT_ROOT.parent.parent / "data" / "ml-20m",          # --target-dir data
           PROJECT_ROOT / "data" / "ml-20m"]                        # generation layout

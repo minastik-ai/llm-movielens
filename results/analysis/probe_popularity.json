@@ -1,0 +1,260 @@
+{
+  "note": "Pre-reg \u00a75 mechanism probe. Aggregate-fed profiles only; no-aggregate arm pending regeneration (S1).",
+  "n_items": 10381,
+  "folds": 5,
+  "seed": 42,
+  "results": [
+    {
+      "mode": "native dim",
+      "target": "log1p(ml_rating_count)",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": 0.1104,
+      "r2_std": 0.0127
+    },
+    {
+      "mode": "native dim",
+      "target": "log1p(ml_rating_count)",
+      "features": "M2 genome-PCA",
+      "r2_mean": 0.5588,
+      "r2_std": 0.0179
+    },
+    {
+      "mode": "native dim",
+      "target": "log1p(ml_rating_count)",
+      "features": "M3 title-emb",
+      "r2_mean": 0.3029,
+      "r2_std": 0.0148
+    },
+    {
+      "mode": "native dim",
+      "target": "log1p(ml_rating_count)",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": 0.1133,
+      "r2_std": 0.0114
+    },
+    {
+      "mode": "native dim",
+      "target": "ml_avg_rating",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": 0.5557,
+      "r2_std": 0.0153
+    },
+    {
+      "mode": "native dim",
+      "target": "ml_avg_rating",
+      "features": "M2 genome-PCA",
+      "r2_mean": 0.9453,
+      "r2_std": 0.0026
+    },
+    {
+      "mode": "native dim",
+      "target": "ml_avg_rating",
+      "features": "M3 title-emb",
+      "r2_mean": 0.3419,
+      "r2_std": 0.0202
+    },
+    {
+      "mode": "native dim",
+      "target": "ml_avg_rating",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": 0.5397,
+      "r2_std": 0.0148
+    },
+    {
+      "mode": "native dim",
+      "target": "log1p(tmdb_vote_count)",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": 0.2843,
+      "r2_std": 0.0091
+    },
+    {
+      "mode": "native dim",
+      "target": "log1p(tmdb_vote_count)",
+      "features": "M2 genome-PCA",
+      "r2_mean": 0.6899,
+      "r2_std": 0.0041
+    },
+    {
+      "mode": "native dim",
+      "target": "log1p(tmdb_vote_count)",
+      "features": "M3 title-emb",
+      "r2_mean": 0.3987,
+      "r2_std": 0.0072
+    },
+    {
+      "mode": "native dim",
+      "target": "log1p(tmdb_vote_count)",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": 0.2813,
+      "r2_std": 0.0212
+    },
+    {
+      "mode": "native dim",
+      "target": "tmdb_vote_average",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": 0.3979,
+      "r2_std": 0.0237
+    },
+    {
+      "mode": "native dim",
+      "target": "tmdb_vote_average",
+      "features": "M2 genome-PCA",
+      "r2_mean": 0.7321,
+      "r2_std": 0.034
+    },
+    {
+      "mode": "native dim",
+      "target": "tmdb_vote_average",
+      "features": "M3 title-emb",
+      "r2_mean": 0.2505,
+      "r2_std": 0.0152
+    },
+    {
+      "mode": "native dim",
+      "target": "tmdb_vote_average",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": 0.383,
+      "r2_std": 0.0229
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "log1p(ml_rating_count)",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": 0.0868,
+      "r2_std": 0.0143
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "log1p(ml_rating_count)",
+      "features": "M2 genome-PCA",
+      "r2_mean": 0.5588,
+      "r2_std": 0.0179
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "log1p(ml_rating_count)",
+      "features": "M3 title-emb",
+      "r2_mean": 0.269,
+      "r2_std": 0.0146
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "log1p(ml_rating_count)",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": 0.0886,
+      "r2_std": 0.0112
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "ml_avg_rating",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": 0.4943,
+      "r2_std": 0.0241
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "ml_avg_rating",
+      "features": "M2 genome-PCA",
+      "r2_mean": 0.9453,
+      "r2_std": 0.0026
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "ml_avg_rating",
+      "features": "M3 title-emb",
+      "r2_mean": 0.3095,
+      "r2_std": 0.0278
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "ml_avg_rating",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": 0.4806,
+      "r2_std": 0.019
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "log1p(tmdb_vote_count)",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": 0.2452,
+      "r2_std": 0.0114
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "log1p(tmdb_vote_count)",
+      "features": "M2 genome-PCA",
+      "r2_mean": 0.6899,
+      "r2_std": 0.0041
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "log1p(tmdb_vote_count)",
+      "features": "M3 title-emb",
+      "r2_mean": 0.3781,
+      "r2_std": 0.0061
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "log1p(tmdb_vote_count)",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": 0.2452,
+      "r2_std": 0.0131
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "tmdb_vote_average",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": 0.3518,
+      "r2_std": 0.0261
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "tmdb_vote_average",
+      "features": "M2 genome-PCA",
+      "r2_mean": 0.7321,
+      "r2_std": 0.034
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "tmdb_vote_average",
+      "features": "M3 title-emb",
+      "r2_mean": 0.2229,
+      "r2_std": 0.0098
+    },
+    {
+      "mode": "matched 128-d",
+      "target": "tmdb_vote_average",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": 0.3327,
+      "r2_std": 0.025
+    },
+    {
+      "mode": "permuted floor",
+      "target": "log1p(ml_rating_count)",
+      "features": "M4 profile (agg-fed)",
+      "r2_mean": -0.0013,
+      "r2_std": 0.0007
+    },
+    {
+      "mode": "permuted floor",
+      "target": "log1p(ml_rating_count)",
+      "features": "M2 genome-PCA",
+      "r2_mean": -0.0001,
+      "r2_std": 0.0004
+    },
+    {
+      "mode": "permuted floor",
+      "target": "log1p(ml_rating_count)",
+      "features": "M3 title-emb",
+      "r2_mean": -0.0,
+      "r2_std": 0.0013
+    },
+    {
+      "mode": "permuted floor",
+      "target": "log1p(ml_rating_count)",
+      "features": "M4 profile (no-agg)",
+      "r2_mean": -0.0012,
+      "r2_std": 0.0008
+    }
+  ]
+}

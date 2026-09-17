@@ -1,0 +1,76 @@
+{
+  "method": "M4",
+  "method_desc": "LLM profile (core content config)",
+  "dataset": "ML-20M (GPT-4o-mini profiles)",
+  "encoder": "bge-large-en-v1.5",
+  "seeds_evaluated": [
+    42,
+    123,
+    456,
+    789,
+    2026
+  ],
+  "per_seed": {
+    "42": {
+      "NDCG@10": 0.11633593393265389,
+      "Recall@10": 0.051284272059202995,
+      "MRR": 0.24145608859180387
+    },
+    "123": {
+      "NDCG@10": 0.11628619297111405,
+      "Recall@10": 0.04819342940258636,
+      "MRR": 0.2392960534908229
+    },
+    "456": {
+      "NDCG@10": 0.11614536154252109,
+      "Recall@10": 0.05001618366246576,
+      "MRR": 0.24030502029025153
+    },
+    "789": {
+      "NDCG@10": 0.11546669149765726,
+      "Recall@10": 0.05127582668454991,
+      "MRR": 0.23921429114053405
+    },
+    "2026": {
+      "NDCG@10": 0.1182488806105074,
+      "Recall@10": 0.05091124774676572,
+      "MRR": 0.2441242736671656
+    }
+  },
+  "summary": {
+    "NDCG@10": {
+      "mean": 0.11649661211089074,
+      "std": 0.0010397898847168494,
+      "values": [
+        0.11633593393265389,
+        0.11628619297111405,
+        0.11614536154252109,
+        0.11546669149765726,
+        0.1182488806105074
+      ]
+    },
+    "Recall@10": {
+      "mean": 0.05033619191111415,
+      "std": 0.0013044438600340446,
+      "values": [
+        0.051284272059202995,
+        0.04819342940258636,
+        0.05001618366246576,
+        0.05127582668454991,
+        0.05091124774676572
+      ]
+    },
+    "MRR": {
+      "mean": 0.24087914543611558,
+      "std": 0.002029240021333953,
+      "values": [
+        0.24145608859180387,
+        0.2392960534908229,
+        0.24030502029025153,
+        0.23921429114053405,
+        0.2441242736671656
+      ]
+    }
+  },
+  "_provenance": "aggregated from the on-disk per-seed seed-*/results.json beside this file (full precision; sample std, ddof=1) by scripts/rebuild_metrics_from_seeds.py. Supersedes: aggregated from results_ml20m_gpt4omini/analysis/cross_llm_summary.json (gpt side); 5-seed test eval of the GPT-4o-mini-profile checkpoints."
+}

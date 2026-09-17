@@ -43,13 +43,16 @@ only be re-checked on a cluster stops being re-checked.
 
 | Path | What it is |
 |---|---|
-| `src/profile_generator/` | Stage 1 — reads a catalogue's structured metadata, writes a profile (80–120 words requested, 95–135 realised — the distribution is in [docs/DATASHEET.md](docs/DATASHEET.md)), a 10-axis mood vector and 3–5 themes per item. Two transports: `batch_generate.py` (Batches API, the price the paper reports) and `main.py` (synchronous, ~2×). |
+| `src/profile_generator/` | Stage 1 — reads a catalogue's structured metadata, writes a profile (80–120 words requested, 95–135 realised — the distribution is in [docs/DATASHEET.md](docs/DATASHEET.md)), a 10-axis mood vector and key themes: 3–5 requested, 3–6 realised (64% have three, four records carry six). Two transports: `batch_generate.py` (Batches API, the price the paper reports) and `main.py` (synchronous, ~2×). |
 | `src/embedding_generator/` | Stage 2 — encodes the generated text into the feature primitives the benchmark consumes. |
 | `src/benchmark/` | Stage 3 — models, features and hyperparameters for the benchmark configurations. |
 | `scripts/` | Every run script behind the paper, including `reproduce_all.sh`. |
 | `tools/` | `verify_paper_numbers.py` (headline numbers), `rebuild_splits.py` (deterministic splits), `verify_generator_e2e.py` (the released code reproduces the released artifact), and the figure and table generators. |
 | `results/` | Per-seed result files: the verifier's input. Per-seed result files for the fourteen configurations this paper reports. |
+| `results_gpt4omini/` | The provider-sensitivity arm: the same M4 and M7 configurations retrained on profiles regenerated with GPT-4o-mini, five paired seeds. These are the per-seed inputs behind the provider table in the paper's appendix, and `analysis/cross_llm_summary.json` records the protocol and the paired *t*-tests. |
 | `paper/generated/` | The macro files the paper's numbers are generated into — the verifier's expectations. |
+| `tests/` | The test suite. 27 tests run on the code alone; 21 more need the artifacts and skip without them, so a fresh clone is green either way. `pip install -r requirements.txt -r tests/requirements.txt && pytest tests/`. |
+| `manifest/` | `prompt_manifest.jsonl` — the SHA-256 of all 10,381 rendered prompts, which `tools/verify_generator_e2e.py` re-renders and checks against. The same file ships in the dataset repository under `metadata/`; the two are byte-identical and a gate holds them so. |
 | `docs/` | Datasheet, reproducibility guide, human-evaluation protocol, the benchmark reading guide, and the two surveys the paper had no room for. |
 
 ## This repository is the artifact, not one paper's supplement
@@ -159,8 +162,16 @@ intention.
 **Anyone can check the release still reproduces itself, without a GPU.**
 
 ```bash
-# Needs nothing but this repository. Seconds, CPU only.
+# No download, no GPU, no API key -- but numpy and scipy must be installed
+# (pip install -r requirements.txt). Seconds.
 python3 tools/verify_paper_numbers.py
+
+# The test suite: 48 tests. 27 run on the code alone; the other 21 need the
+# artifacts and SKIP without them, so a fresh clone is green either way. The
+# project's own requirements are part of the install -- the suite exercises the
+# shipped code, so a runner alone leaves every one of the 27 skipping.
+pip install -r requirements.txt -r tests/requirements.txt
+pytest tests/
 
 # Needs the source data as well (bash scripts/download_ml20m.sh first), because it
 # re-renders all 10,381 prompts and checks their SHA-256 against the released

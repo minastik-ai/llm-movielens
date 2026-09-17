@@ -50,7 +50,7 @@ from config.settings import (SYSTEM_PROMPT, USER_PROMPT_TEMPLATE, CLAUDE_MODEL,
 from data_loader import load_all_data
 from tmdb_crawler import load_cache
 from main import prepare_movie_data
-from profile_generator import validate_profile_json
+from generator import validate_profile_json
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("ml20m-masked")

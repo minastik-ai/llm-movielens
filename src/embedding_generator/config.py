@@ -25,7 +25,7 @@ PROFILE_GENERATOR_ROOT = _find_generator(PROJECT_ROOT)
 
 # Input
 PROFILES_JSON = PROFILE_GENERATOR_ROOT / "output" / "movie_profiles.json"
-# Same resolution order as the generator and the benchmark (§12.21): the
+# Same resolution order as the generator and the benchmark: the
 # generation layout, then what scripts/download_ml20m.sh creates, then a reader
 # who passed --target-dir data, with ML20M_DIR overriding all three.
 _ML20M = [PROJECT_ROOT.parent.parent / "data" / "raw" / "ml-20m",  # download_ml20m.sh

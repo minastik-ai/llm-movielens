@@ -113,7 +113,7 @@ def main():
     from config import settings
     from data_loader import load_all_data
     from main import prepare_movie_data
-    from profile_generator import validate_profile_json
+    from generator import validate_profile_json
     import batch_generate
 
     # ---- 1. transport-only -------------------------------------------------

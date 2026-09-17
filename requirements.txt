@@ -12,7 +12,6 @@ anthropic>=0.40.0,<1.0        # 1.x REMOVED `temperature` from messages.create()
 python-dotenv>=1.0.0,<2.0
 aiohttp>=3.9.0,<4.0
 certifi>=2024.2.2             # imported by tmdb_crawler.py
-tqdm>=4.65.0,<5.0
 
 # --- embeddings and evaluation ----------------------------------------------
 # On a feature-learning paper the embeddings ARE the results, so these matter as
@@ -33,11 +32,14 @@ matplotlib>=3.7.0,<4.0
 # --- the cross-LLM arm and metadata fetch -----------------------------------
 # Also undeclared until every import was extracted with ast. The paper's cross-LLM
 # comparison regenerates all 10,381 profiles with GPT-4o-mini, so a reader
-# reproducing that section needs the OpenAI client; the book catalogue is fetched
-# over HTTP; one parallel runner reads a YAML config.
+# reproducing that section needs the OpenAI client, and the book catalogue is
+# fetched over HTTP.
 openai>=1.0.0,<3.0
 requests>=2.31.0,<3.0
-pyyaml>=6.0,<7.0
+
+# tqdm and pyyaml were declared here and imported by NOTHING in this release --
+# only by runners that are not part of it. Every line here is a package shipped
+# code imports directly; transitive needs arrive on their own.
 
 # --- fetching the released artifacts ----------------------------------------
 # scripts/download_artifacts.py pulls the profiles and embeddings so a reader can

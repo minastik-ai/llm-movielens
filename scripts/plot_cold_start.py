@@ -1,4 +1,4 @@
-"""Regenerate cold_start_barchart.pdf for paper §5.2.
+"""Regenerate cold_start_barchart.pdf, the cold-start bucket figure.
 
 Left panel: rank_median per bucket (lower = better).
 Right panel: Recall@1000 per bucket (higher = better).

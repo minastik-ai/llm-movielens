@@ -46,6 +46,21 @@ def compute_metrics(
 
     # Get top-K item indices
     max_k = max(top_k)
+    if scores.shape[0] < max_k:
+        # The sibling guard in dataset.get_train_loader() exists because a dataset
+        # smaller than one batch died in arithmetic rather than in a message. This
+        # is the same failure one step later: a catalogue smaller than the largest
+        # K reaches np.argpartition and returns "kth(=-10) out of bounds", which
+        # names neither the catalogue nor K. Every catalogue in the paper is far
+        # larger, so only a reader on a reduced or synthetic split meets this --
+        # exactly the reader least able to interpret a numpy traceback.
+        raise ValueError(
+            f"full-ranking evaluation needs at least max(TOP_K)={max_k} items and "
+            f"this split has {scores.shape[0]}.\n"
+            f"Lower TOP_K (config.py) to values your catalogue supports, or evaluate "
+            f"on a larger one. The published runs use TOP_K={top_k} on catalogues of "
+            f"thousands of items; changing K changes what the metrics mean, so a run "
+            f"with different K does not reproduce the paper's numbers.")
     top_indices = np.argpartition(scores, -max_k)[-max_k:]
     top_indices = top_indices[np.argsort(-scores[top_indices])]
 

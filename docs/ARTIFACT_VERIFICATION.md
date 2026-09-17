@@ -29,7 +29,7 @@ The paper (the profile-generation section) and the datasheet stated:
 
 Three things are wrong with that.
 
-**The code does not do what the sentence describes.** `profile_generator.py` runs
+**The code does not do what the sentence describes.** `generator.py` runs
 
 ```python
 text = re.sub(r'"movieId"\s*:\s*[^,}\]]+', f'"movieId": {movie_id}', text, count=1)
