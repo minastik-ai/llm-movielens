@@ -83,7 +83,8 @@ headline numbers in the paper come from `bge-large-en-v1.5`**; the `e5-large-v2`
 files back the encoder-sensitivity table alone, and the verifier reads only the bge
 tree. They are worth opening for one reason: they are what shows that the
 profile-over-title margin, the paper's cleanest comparison, is `+3.3%` under
-bge-large and not significant under e5-large.
+bge-large and `+1.0%` (p = 0.25) under e5-large — the profile leads under both
+encoders; only the separation is encoder-dependent.
 
 ## Reproducing, in the order the pipeline runs
 
