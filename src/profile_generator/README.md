@@ -378,4 +378,4 @@ The critical comparison is **LLM profile embedding vs. genome raw PCA** — this
 
 ## Research Context
 
-This pipeline addresses a gap in the released resources: we found no prior release that applies LLM feature synthesis to the full MovieLens 20M catalogue, or that uses the tag genome as structured input to the generation. The closest works (LLMRec at WSDM 2024, RLMRec at WWW 2024, A-LLMRec at KDD 2024) use either ML-1M, heavily filtered ML-10M subsets (<1% of ML-20M), or Amazon datasets — and none touch the genome tag data.
+This pipeline addresses a gap in the released resources: we found no prior release that applies LLM feature synthesis to the genome-annotated portion of MovieLens 20M — the 10,381 items this resource covers in full — or that uses the tag genome as structured input to the generation. The closest works (LLMRec at WSDM 2024, RLMRec at WWW 2024, A-LLMRec at KDD 2024) were built on MovieLens 1M, a filtered MovieLens 10M, or Amazon subsets — and none touch the genome tag data.

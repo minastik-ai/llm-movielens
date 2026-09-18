@@ -214,7 +214,7 @@ class TestPatienceIsRecordedAndHonoured:
 class TestBestModelCarriesProvenance:
     """`best_model.pt` is a bare state_dict that external tools load directly.
 
-    Its format must NOT change — the released HF spot-check and the eval scripts
+    Its format must NOT change — the eval scripts
     all do `load_state_dict(torch.load(best_model.pt))`. So provenance goes in a
     sidecar next to it.
     """

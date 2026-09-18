@@ -196,8 +196,7 @@ def _write_best_model_meta(checkpoint_dir, epoch, best_epoch, best_ndcg,
     """Record provenance for `best_model.pt` in a SIDECAR, not inside the file.
 
     `best_model.pt` is a bare `state_dict`, and external consumers load it
-    directly -- the eval scripts, the vendored RLMRec/SASRec harnesses, and the
-    released HuggingFace spot-check notebook all do
+    directly -- the eval scripts all do
     `model.load_state_dict(torch.load(best_model.pt))`. Wrapping the weights in
     a metadata dict would break every one of them, including a published
     artifact. So the provenance goes next to the file instead:
@@ -459,8 +458,8 @@ def train_model(
             "num_epochs": num_epochs,
             "patience": patience,
             # The unit is the whole point: this trainer counts patience in EPOCHS,
-            # while RLMRec and SASRec count it in EVALUATIONS, so the bare number
-            # is ambiguous across the arms a reader compares. The paper recommends
+            # while several widely used implementations count it in EVALUATIONS, so
+            # the bare number is ambiguous. The paper recommends
             # recording the unit; recording it here is what makes that true.
             "patience_unit": "epochs",
             "batch_size": batch_size,

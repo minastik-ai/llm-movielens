@@ -29,7 +29,6 @@ METRICS = ["NDCG@10", "NDCG@20", "Recall@10", "Recall@20", "HR@10", "HR@20", "MR
 CONFIG_ORDER = [
     "M0", "M1", "M1b", "M1c", "M1d",  # Tier 1
     "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9",  # Tier 2
-    "R2", "R3",  # Tier 3
 ]
 
 CONFIG_LABELS = {
@@ -46,8 +45,6 @@ CONFIG_LABELS = {
     "M7": "+Profile+Mood",
     "M8": "+All LLM",
     "M9": "+Genome+Mood+Themes",
-    "R2": "RLMRec-gene",
-    "R3": "KAR",
 }
 
 
@@ -135,7 +132,6 @@ def export_latex(data: dict, output_path: Path):
     tier_headers = {
         "M0": r"\multicolumn{6}{l}{\textit{Tier 1: Pure Collaborative Filtering}} \\",
         "M2": r"\midrule" + "\n" + r"\multicolumn{6}{l}{\textit{Tier 2: Content-Augmented LightGCN-SF}} \\",
-        "R2": r"\midrule" + "\n" + r"\multicolumn{6}{l}{\textit{Tier 3: LLM-for-RecSys Methods}} \\",
     }
 
     for config in CONFIG_ORDER:

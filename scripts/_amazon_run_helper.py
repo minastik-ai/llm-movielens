@@ -130,11 +130,11 @@ def run_amazon_config(model: str, features: str, label: str) -> dict:
     logger.info(f"  features   : {features} → {feature_names} (dim={feature_dim})")
 
     norm_adj = None
-    if model in ("lightgcn", "lightgcn_sf", "xsimgcl", "simgcl", "lightgcl", "kar"):
+    if model in ("lightgcn", "lightgcn_sf", "xsimgcl", "simgcl", "lightgcl"):
         norm_adj = data.get_norm_adj().to(device)
 
     net = build_model(model, data.n_users, data.n_items, feature_dim, norm_adj)
-    if model in ("lightgcn_sf", "kar") and feature_names:
+    if model in ("lightgcn_sf",) and feature_names:
         item_features = feature_loader.get_combined_tensor(
             feature_names, device=device,
         )

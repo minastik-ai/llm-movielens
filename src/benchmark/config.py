@@ -71,7 +71,6 @@ EMBED_DIM = 128                # shared embedding dimension for all models
 LIGHTGCN_LAYERS = 3            # number of graph convolution layers
 LIGHTGCN_DROPOUT = 0.0         # no dropout (per original LightGCN paper)
 LIGHTGCL_SVD_Q = 5             # SVD rank for LightGCL contrastive view
-KAR_N_EXPERTS = 4              # number of expert MLPs in KAR hybrid adapter
 
 # Training
 LEARNING_RATE = 1e-3
@@ -134,7 +133,6 @@ CONFIG_NAME_MAP = {
     ("lightgcn_sf", "llm_prof_mood"): "M7",
     ("lightgcn_sf", "llm_all"):       "M8",
     ("lightgcn_sf", "genome_llm"):    "M9",
-    ("kar",         "llm_prof_mood"): "R2",   # KAR (paper R2 after R1 drop)
 }
 
 
@@ -142,7 +140,7 @@ def resolve_config(label: str) -> tuple[str, str]:
     """Paper label -> (model, features). The inverse of get_config_name().
 
     The paper and `reproduce_all.sh` both address configurations the way the tables
-    do -- "M4", "R2" -- while run_experiment.py takes --model/--features. Without
+    do -- "M4", "M7" -- while run_experiment.py takes --model/--features. Without
     this the documented command (`--config m4`) did not exist, and reproduce_all.sh
     invoked a module path that did not either, so it failed on all 80 experiments.
     """
@@ -156,7 +154,7 @@ def resolve_config(label: str) -> tuple[str, str]:
 
 
 def get_config_name(model: str, features: str) -> str:
-    """Return the paper-style config label (e.g. 'M0', 'M7', 'R2').
+    """Return the paper-style config label (e.g. 'M0', 'M4', 'M7').
 
     Falls back to a descriptive key if the combination isn't in the map —
     useful for ad-hoc runs that don't correspond to a reported ablation row.

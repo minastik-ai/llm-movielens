@@ -81,8 +81,9 @@ The per-seed files these are computed from ship in `results/`, so the whole tabl
 can be re-derived on a CPU in seconds.
 
 One difference worth knowing before you diff your own run against them: the shipped
-files are the output of an **eval-only re-evaluation** of the released checkpoints,
-not of the training script, which is what their `_provenance` field records. They
+files are the output of an **eval-only re-evaluation** of the trained checkpoints
+— which are not themselves released, see the root `README.md` — rather than of the
+training script, which is what their `_provenance` field records. They
 therefore carry `seed` and `_provenance` where a fresh training run writes
 `best_epoch`, `best_val_metrics`, `stopped_early` and `total_epochs_trained`. The
 `test_metrics` block -- the part every number in the paper is computed from -- has
@@ -159,8 +160,8 @@ bash scripts/reproduce_all.sh --tier 2     # Content-augmented (M2 … M9)
 bash scripts/reproduce_all.sh --config M4
 ```
 
-There is no third tier here: the replacer-class configurations are not reported by
-the paper and their per-seed results are not staged, so running them would produce
+There is no third tier here. Every configuration this release carries is one the
+paper reports; nothing else is staged, so there is no tier that would produce
 numbers no table accounts for.
 
 ## Verifying Results

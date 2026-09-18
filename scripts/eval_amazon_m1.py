@@ -8,7 +8,7 @@ written one (`results_amazon/m1/.../seed-*/`).
 
 This is eval-only — no training, no checkpoint mutation. The 5 best_model.pt
 files were produced by the original M1 training runs; we just persist their
-test metrics for paper-claim traceability (Q6: SASRec vs M1 = −48.5% on Amazon).
+test metrics for paper-claim traceability.
 
 Usage:
     python3 scripts/eval_amazon_m1.py

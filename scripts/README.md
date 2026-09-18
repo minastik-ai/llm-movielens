@@ -23,7 +23,6 @@ The rest each produced one result and are kept so each is separately checkable.
 | Script | What it does |
 |---|---|
 | `prepare_ml1m.py` | ML-1M preprocessing for the LLM-MovieLens benchmark. |
-| `prepare_ml20m_subsampled.py` | Subsample ML-20M to a same-domain density gradient datapoint between ML-20M |
 | `fetch_amazon_books_metadata.py` | Fetch Amazon-Books metadata via OpenLibrary API. |
 | `rebuild_metrics_from_seeds.py` | Rebuild each results*/<cfg>/metrics.json from its own seed-*/results.json files. |
 

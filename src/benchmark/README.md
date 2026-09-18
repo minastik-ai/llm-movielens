@@ -41,7 +41,6 @@ table describes:
 | Q2 | M4 vs M2/M2b | Does LLM-synthesized content beat genome tags, regardless of dimensionality? **(Central claim)** |
 | Q3 | M4 vs M3 | Does LLM reasoning matter, or does naive BERT encoding suffice? |
 | Q4 | M7 vs M4 | Do structured mood features add value beyond semantic embeddings? |
-| Q5 | M4/M7 vs R1/R2 | Does simple additive injection outperform sophisticated alignment methods? |
 
 Supporting comparisons (not primary research questions, but informative):
 
@@ -53,7 +52,7 @@ Supporting comparisons (not primary research questions, but informative):
 | M7 vs M8 | Do categorical themes further help, or add noise? |
 | M2 vs M9 | Do structured LLM features complement genome tags? |
 
-For a **dataset paper**, the goal is not to propose a new model — it is to demonstrate that the LLM-generated features (profiles, moods, themes) are a **useful resource**. We need baselines at multiple strength levels so that improvements cannot be dismissed as "you just used a weak baseline." BPR-MF is the floor, LightGCL is the ceiling of pure-CF methods, and LightGCN-SF is the controlled testbed that keeps architecture constant while varying only the features.
+For a **resource paper**, the goal is not to propose a new model — it is to demonstrate that the LLM-generated features (profiles, moods, themes) are a **useful resource**. We need baselines at multiple strength levels so that improvements cannot be dismissed as "you just used a weak baseline." BPR-MF is the floor, LightGCL is the ceiling of pure-CF methods, and LightGCN-SF is the controlled testbed that keeps architecture constant while varying only the features.
 
 ### Tier 1: Pure Collaborative Filtering
 
@@ -202,39 +201,8 @@ The MLP compresses arbitrary-dimensional features (10-dim mood, 128-dim genome, 
 - The **2-layer MLP with ReLU** allows nonlinear transformation — a single linear layer would be a linear projection that may not capture complex relationships between feature dimensions.
 - Features are injected **before propagation** (not after) so content information can propagate to neighbors — a user's representation benefits from the content features of all items they interacted with. After 3 layers, content signal has reached 3-hop neighborhoods.
 
-**Why included.** The **primary ablation host** and the most critical model in this benchmark. By varying only the content features while keeping the model architecture identical, we isolate the effect of each feature type. This is the core experimental design that makes the dataset paper's contribution clear.
+**Why included.** The **primary ablation host** and the most critical model in this benchmark. By varying only the content features while keeping the model architecture identical, we isolate the effect of each feature type. This is the core experimental design that makes the resource paper's contribution clear.
 
-### Tier 3: LLM-for-RecSys Methods
-
-#### RLMRec-plus (Wei et al., WWW 2024)
-
-**Algorithm.** Bridges ID-based collaborative filtering and LLM semantic understanding through **cross-view contrastive alignment**. Generates user/item text profiles via an LLM (we use our Claude Haiku profiles), encodes them into semantic embeddings, then applies a contrastive knowledge distillation loss that aligns the CF embedding space with the semantic embedding space — pulling the CF representation of an item toward its LLM semantic representation, and pushing it away from other items' representations. The CF backbone (LightGCN) learns to incorporate semantic structure without modifying its architecture.
-
-**Why included.** The leading model-agnostic framework for injecting LLM knowledge into recommendation. Directly comparable to our approach — both use LLM-generated embeddings, but RLMRec uses contrastive alignment while we use additive feature injection.
-
-#### RLMRec-gene (Wei et al., WWW 2024)
-
-**Algorithm.** Instead of aligning CF and semantic spaces, learns to **reconstruct** LLM semantic embeddings from masked CF embeddings. Randomly masks portions of the GCN-propagated embeddings, then trains an auxiliary decoder to reconstruct the LLM semantic embedding from the masked CF embedding. This generative self-supervised objective forces the CF embeddings to encode information present in the LLM representations, without requiring explicit alignment.
-
-**Why included.** Provides a generative counterpart to the contrastive RLMRec-plus. If RLMRec-gene outperforms our simpler additive injection, it suggests that more sophisticated fusion mechanisms are needed. If our approach matches it, it validates that simple injection of high-quality features is sufficient.
-
-#### KAR (Xi et al., KDD 2024)
-
-**Algorithm.** Knowledge-Augmented Recommendation integrates LLM-generated knowledge features into a LightGCN backbone via a **hybrid-expert adapter**. Instead of a single MLP projection (as in LightGCN-SF), KAR uses a mixture-of-experts (MoE) module:
-
-1. **Multiple expert MLPs** (4 experts) each project the knowledge features into the embedding space
-2. A **gating network** conditioned on the item's CF embedding produces softmax weights over experts
-3. The final knowledge representation is the weighted sum of expert outputs, added to the learned embedding
-
-```
-gate_weights = softmax(W_gate · e_i^cf)           # (n_experts,)
-knowledge_emb = Σ_k gate_weights[k] · Expert_k(features)
-item_repr = e_i^cf + knowledge_emb
-```
-
-This allows the model to **adaptively select** how to integrate knowledge features based on each item's collaborative profile — items with rich interaction history may weight experts differently than cold-start items.
-
-**Why included.** The leading knowledge-augmented LLM-for-RecSys method from a top venue (KDD 2024). Uses a more sophisticated feature integration mechanism (MoE adapter) than our simple additive injection. Comparison against KAR tests whether the hybrid-expert adapter provides meaningful benefit over LightGCN-SF's simpler MLP projection when using the same LLM-generated features.
 
 ## Experimental Settings
 
@@ -348,17 +316,6 @@ Default dimensions shown for bge-large-en-v1.5 (1024-dim, no PCA). With `--pca-d
 
 **Key point:** Regardless of input feature dimensionality (10, 128, 528, 1024, 1562), the MLP always outputs 128-dim, which is added to the 128-dim learned embedding. The graph propagation always operates in 128-dim space. This makes all Tier 2 experiments directly comparable — the only variable is feature quality, not architecture.
 
-### Tier 3: LLM-for-RecSys Methods
-
-These use more sophisticated integration mechanisms than LightGCN-SF's simple additive injection.
-
-| ID | Model | Backbone | Integration Method | Features | Key Difference from LightGCN-SF |
-|----|-------|----------|-------------------|----------|-------------------------------|
-| R1 | RLMRec-plus | LightGCN | Contrastive distillation | LLM embeddings | Aligns CF space with LLM space via InfoNCE, doesn't inject features directly |
-| R2 | RLMRec-gene | LightGCN | Generative reconstruction | LLM embeddings | Reconstructs LLM embeddings from masked CF embeddings |
-| R3 | KAR | LightGCN | MoE adapter (4 experts) | LLM profile + mood | 4 expert MLPs + gating network instead of 1 MLP; gate is conditioned on CF embedding |
-
-**The question Tier 3 answers:** Does a more sophisticated integration mechanism (contrastive alignment, generative reconstruction, mixture-of-experts) outperform LightGCN-SF's simple `learned_emb + MLP(features)`? If not, **feature quality matters more than integration sophistication** — the strongest argument for releasing the dataset.
 
 ### Key Comparisons
 
@@ -370,7 +327,6 @@ The five comparisons the harness is built around, matching the hierarchy table a
 | Q2 | M4 vs M2/M2b | Does LLM-synthesized content beat genome tags, regardless of dimensionality? **(Central claim)** |
 | Q3 | M4 vs M3 | Does LLM reasoning matter, or does naive BERT encoding suffice? |
 | Q4 | M7 vs M4 | Do structured mood features add value beyond semantic embeddings? |
-| Q5 | M4/M7 vs R1/R2 | Does simple additive injection outperform sophisticated alignment methods? |
 
 Supporting comparisons (not primary research questions, but informative):
 
@@ -384,42 +340,31 @@ Supporting comparisons (not primary research questions, but informative):
 
 ## Experiment Status
 
-All ML-20M, ML-1M, and Amazon-Books sweeps are complete (5 seeds × 16+ configurations each).
-For headline results see the paper's main ML-20M results table; the ML-1M and
-Amazon sweeps are shipped here as per-seed files whether or not the paper
-reports them.
-For protocol details (200 epochs / patience 20 for LightGCN-SF infrastructure;
-upstream-controlled budgets for R1, SASRec, KAR sanity check) see the paper's
-experimental-protocol section.
+The ML-20M sweep is complete: 5 seeds x every configuration listed above, under two
+sentence encoders, plus the GPT-4o-mini provider arm for M4 and M7. For headline
+results see the paper's main results table. For protocol details (200 epochs,
+patience 20 for LightGCN-SF) see the paper's experimental-protocol section.
 
-## Output Layout (`results*/` mirrors `checkpoints*/`)
+## Output Layout
 
-The base dataset (ML-20M) is unsuffixed; others carry a suffix (`_amazon`, `_ml1m`,
-`_ml20m_sub163`, `_ml20m_gpt4omini`). For each dataset, **`results<suffix>/` mirrors
-`checkpoints<suffix>/` one-to-one** — every config is a directory:
+**`results/`** holds one directory per configuration — the five-seed aggregate and the
+per-seed leaves the verifier reads:
 
 ```
-checkpoints<suffix>/<config>/<encoder>/seed-<N>/best_model.pt (+ training_state.pt)
-results<suffix>/<config>/metrics.json                  # 5-seed aggregate (NDCG@10/Recall@10/MRR)
-results<suffix>/<config>/<encoder>/seed-<N>/results.json   # per-seed, where the run dumped it
-results<suffix>/analysis/                              # NON-per-config: cold_start_*, mood_analysis/,
-                                                       #   verify_*, cross_llm_* (gpt4omini)
+results/<config>/metrics.json                    # 5-seed aggregate (NDCG@10/Recall@10/MRR)
+results/<config>/<encoder>/seed-<N>/results.json # per-seed leaf
+results/analysis/                                # NON-per-config: cold_start_*, mood_analysis/, verify_*
+results_gpt4omini/                               # the provider-sensitivity arm (M4, M7)
 ```
 
-- `<config>` ∈ {m0–m9, r1, r1plus, r2, r3, sasrec_pmixer}. Some cross-density configs carry a
-  **dual-protocol sibling** (original vs per-dataset-retuned), each with its own checkpoint:
-  Amazon `r1plus` (layer_num=2 control) + `r1plus_l3` (layer_num=3 canonical); and **`r2`
-  (ML-20M-tuned/original, paper headline) + `r2_retuned` (per-dataset `weight_decay=1e-4`,
-  paper App. `r2_retune`) on both Amazon and ML-1M**.
-- **`metrics.json` is the per-config headline aggregate** (same schema for R- and M-configs).
-- **Every config has a `metrics.json` AND full per-seed leaves — 50/50 across all datasets, all rich
-  (all-K metrics).** Every leaf is eval-only from the released checkpoint and reproduces its paper
-  number exactly. By model family:
-  - **M-configs (all datasets) + R2 (KAR) + R3 (HypernetReplacer) + gpt4omini m4/m7** —
-    `python3 eval_checkpoints.py [--dataset amazon|ml1m|ml20m_sub163|ml20m_gpt4omini] [--configs ...]`
-    (project models; via the shared `evaluate_model`).
-  - `materialize_per_seed_leaves.py` (aggregate→thin-leaf backfill) is retained as a fallback, but is
-    currently a no-op — all configs now have rich re-eval leaves.
+- `<config>` ∈ {m0–m9 and the content variants} — the configurations the paper reports.
+- `<encoder>` ∈ {`bge-large-en-v1.5`, `e5-large-v2`}; the headline numbers are bge.
+- **`metrics.json` is the per-config headline aggregate.**
+- **Every configuration has a `metrics.json` and full per-seed leaves** (all-K metrics).
+  Each leaf is an eval-only re-evaluation of a trained checkpoint rather than of the
+  training script, and reproduces its paper number exactly:
+  `python3 eval_checkpoints.py [--configs ...]` (via the shared `evaluate_model`).
+  The checkpoints themselves are not part of the public release.
 
 ## How to Run
 
@@ -453,8 +398,8 @@ python run_experiment.py --model lightgcn_sf --features llm_profile --seed 42 \
 
 | Argument | Default | Description |
 |----------|---------|-------------|
-| `--config` | none | Paper label (`M0`, `M4`, `R2`, ...); sets `--model` and `--features` together. Give this **or** `--model`. |
-| `--model` | none | Model: `bpr_mf`, `lightgcn`, `lightgcn_sf`, `simgcl`, `xsimgcl`, `lightgcl`, `kar` |
+| `--config` | none | Paper label (`M0`, `M4`, `M7`, ...); sets `--model` and `--features` together. Give this **or** `--model`. |
+| `--model` | none | Model: `bpr_mf`, `lightgcn`, `lightgcn_sf`, `simgcl`, `xsimgcl`, `lightgcl` |
 | `--features` | `none` | Feature config: `none`, `genome`, `bert_title`, `llm_profile`, `llm_mood`, `llm_themes`, `llm_prof_mood`, `llm_all`, `genome_llm` |
 | `--seed` | `42` | Random seed |
 | `--lr` | `1e-3` | Learning rate |
@@ -662,7 +607,7 @@ python run_ablation.py --quick --embedding-dir ../embedding_generator/output/gte
 
 Each run writes to `{checkpoints,results}/{config}/{encoder}/seed-{seed}/`, where:
 
-- `{config}` is the paper-style experiment label (e.g. `m0`, `m4`, `m7`, `r2`), looked up from `CONFIG_NAME_MAP` in `config.py` by the `(model, features)` pair
+- `{config}` is the paper-style experiment label (e.g. `m0`, `m4`, `m7`), looked up from `CONFIG_NAME_MAP` in `config.py` by the `(model, features)` pair
 - `{encoder}` is inferred from the trailing component of `EMBEDDING_DIR` (e.g. `bge-large-en-v1.5`, `e5-large-v2`, `gte-large-v1.5`)
 - `{seed}` is the integer random seed
 
@@ -690,7 +635,7 @@ results/
 ├── m7/
 │   ├── bge-large-en-v1.5/...
 │   └── e5-large-v2/...
-├── r2/bge-large-en-v1.5/seed-42/results.json
+├── m7/bge-large-en-v1.5/seed-42/results.json
 ├── ablation_summary_bge-large-en-v1.5.json           # per-encoder summaries
 ├── ablation_summary_e5-large-v2.json
 └── encoder_sensitivity_summary.json               # cross-encoder merge
@@ -811,12 +756,7 @@ benchmark/
 │   ├── simgcl.py                  # SimGCL (noise-based contrastive)
 │   ├── xsimgcl.py                 # XSimGCL (cross-layer contrastive)
 │   ├── lightgcl.py                # LightGCL (SVD-based contrastive)
-│   ├── kar.py                     # KAR (knowledge-augmented, MoE adapter)
-│   └── sasrec.py                  # SASRec (sequential, for future use)
 ├── external/
-│   ├── RLMRec/                    # Official RLMRec repo (patched for ML-20M)
-│   ├── prepare_rlmrec_data.py     # Data adapter for RLMRec format
-│   └── run_rlmrec.sh              # Run script for RLMRec experiments
 └── requirements.txt
 ```
 
@@ -827,8 +767,6 @@ benchmark/
 - Yu et al. "Are Graph Augmentations Necessary? Simple Graph Contrastive Learning for Recommendation." SIGIR 2022. (SimGCL)
 - Yu et al. "XSimGCL: Towards Extremely Simple Graph Contrastive Learning for Recommendation." TKDE 2023.
 - Cai et al. "LightGCL: Simple Yet Effective Graph Contrastive Learning for Recommendation." ICLR 2023.
-- Wei et al. "RLMRec: Representation Learning with Large Language Models for Recommendation." WWW 2024.
-- Xi et al. "Towards Open-World Recommendation with Knowledge Augmentation from Large Language Models." KDD 2024. (KAR)
 - Krichene & Rendle. "On Sampled Metrics for Item Recommendation." KDD 2020.
 - Rendle et al. "Are We Really Making Much Progress? Revisiting, Benchmarking and Refining the Evaluation of Recommender Systems." RecSys 2019.
 - Harper & Konstan. "The MovieLens Datasets: History and Context." ACM TIIS 2015.

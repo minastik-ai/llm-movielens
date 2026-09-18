@@ -13,9 +13,8 @@ set -euo pipefail
 SEEDS=(42 123 456 789 2026)
 TIER1=(M0 M1 M1b M1c M1d)
 TIER2=(M2 M2b M3 M4 M5 M6 M7 M8 M9)   # M2b = raw 1,128-d genome, the dimensionality control
-# No tier 3 here. R2 and R3 are replacer-class configurations that neither the
-# resource paper nor its fuller version reports, and their per-seed results are
-# no longer staged, so running them would produce numbers no table accounts for.
+# Two tiers. Every configuration this paper reports is M-prefixed; there is no
+# third tier in this release.
 
 TIER_FILTER=""
 CONFIG_FILTER=""
@@ -38,8 +37,7 @@ elif [ -n "$TIER_FILTER" ]; then
     case $TIER_FILTER in
         1) CONFIGS=("${TIER1[@]}") ;;
         2) CONFIGS=("${TIER2[@]}") ;;
-        3) echo "There is no tier 3 in this release: the R2/R3 replacer configurations" >&2
-           echo "are not reported here and their per-seed results are not staged." >&2
+        3) echo "There is no tier 3 in this release; use 1 or 2." >&2
            exit 1 ;;
         *) echo "Invalid tier: $TIER_FILTER (use 1 or 2)" >&2; exit 1 ;;
     esac

@@ -36,7 +36,7 @@ OUT_DIR = code("benchmark", "data", "processed_ml1m")
 POSITIVE_THRESHOLD = 3.5
 K_CORE = 10
 # Percentile-based temporal split: train=earliest 80%, val=next 10%, test=last 10%.
-# This is the dominant convention in the ML-1M literature (RLMRec, KAR, LightGCL)
+# This is the dominant convention in the ML-1M literature
 # and gives a cleanly-sized eval set; fixed-date cutoffs on ML-1M's 3-year span
 # leave too few users in val/test under k-core+positive filtering.
 TRAIN_PCT = 0.80

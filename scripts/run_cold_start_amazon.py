@@ -40,7 +40,6 @@ from config import EMBED_DIM, LIGHTGCN_LAYERS  # noqa: E402
 from data.dataset import InteractionData  # noqa: E402
 from features.loader import FeatureLoader  # noqa: E402
 from models.lightgcn import LightGCN, LightGCNSF  # noqa: E402
-from models.kar import KAR  # noqa: E402
 
 # Amazon-Books-pinned paths (do not read from config.py defaults).
 DATA_DIR = BENCH / "data" / "processed_amazon"
@@ -57,7 +56,6 @@ CONFIGS = [
     ("M1", "lightgcn",     "none"),
     ("M4", "lightgcn_sf",  "llm_profile"),
     ("M7", "lightgcn_sf",  "llm_prof_mood"),
-    ("R2", "kar",          "llm_prof_mood"),
 ]
 SEEDS = [42, 123, 456, 789, 2026]
 K_VALUES = [10, 50, 100, 500, 1000]
@@ -82,9 +80,6 @@ def _pick_device(req: str) -> str:
 def _build_model(name, n_users, n_items, feat_dim, norm_adj, device):
     if name == "lightgcn":
         m = LightGCN(n_users, n_items, EMBED_DIM, LIGHTGCN_LAYERS).to(device)
-    elif name == "kar":
-        m = KAR(n_users, n_items, EMBED_DIM, LIGHTGCN_LAYERS,
-                feature_dim=feat_dim, n_experts=4).to(device)
     else:
         m = LightGCNSF(n_users, n_items, EMBED_DIM, LIGHTGCN_LAYERS, feat_dim).to(device)
     m.set_adj(norm_adj)

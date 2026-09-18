@@ -13,9 +13,6 @@ was produced some other way, and the two disagree:
     which is how the paper came to print +29.5% where full precision gives +29.34%.
     It also made the verifier circular: it compared the paper against a file
     generated from its own constants, so it could not fail.
-  * 2 configs (`results_amazon/r3`, `results_ml1m/r3`) carry `"Re-shaped from
-    hparams/r3/grid_selection.json"` -- the SELECTION-time metrics, superseded by
-    the checkpoint re-evaluation but never replaced.
 
 The per-seed files are canonical: each records `"eval-only full-ranking
 re-evaluation of the released best_model.pt (no retraining)"`, which is what a

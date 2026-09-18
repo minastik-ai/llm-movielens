@@ -49,7 +49,6 @@ ABLATION_TABLE = [
     ("lightgcn_sf", "genome_llm",    "M9: + genome+mood+themes"),
 
     # Tier 3: LLM-for-RecSys methods
-    ("kar",         "llm_prof_mood", "R2: KAR + LLM profile+mood"),
 ]
 
 

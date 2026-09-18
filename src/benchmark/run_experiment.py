@@ -26,7 +26,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from config import (
     EMBED_DIM, LIGHTGCN_LAYERS, LEARNING_RATE, WEIGHT_DECAY,
     NUM_EPOCHS, PATIENCE, BATCH_SIZE, FEATURE_CONFIGS, SEEDS,
-    LIGHTGCL_SVD_Q, KAR_N_EXPERTS,
+    LIGHTGCL_SVD_Q,
     EMBEDDING_DIR, DATA_DIR, RESULTS_DIR, CHECKPOINT_DIR,
     experiment_path,
     resolve_config,
@@ -38,7 +38,6 @@ from models.lightgcn import LightGCN, LightGCNSF
 from models.xsimgcl import XSimGCL
 from models.simgcl import SimGCL
 from models.lightgcl import LightGCL as LightGCLModel
-from models.kar import KAR
 from train import train_model
 
 
@@ -113,16 +112,6 @@ def build_model(
             model.set_adj(norm_adj)
         return model
 
-    elif model_name == "kar":
-        if feature_dim == 0:
-            raise ValueError("kar requires features (feature_dim > 0)")
-        model = KAR(
-            n_users, n_items, EMBED_DIM, LIGHTGCN_LAYERS,
-            feature_dim=feature_dim, n_experts=KAR_N_EXPERTS,
-        )
-        if norm_adj is not None:
-            model.set_adj(norm_adj)
-        return model
 
     else:
         raise ValueError(f"Unknown model: {model_name}")
@@ -131,10 +120,10 @@ def build_model(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, default=None,
-                        help="Paper label (M0, M4, R2, ...): sets --model and "
+                        help="Paper label (M0, M4, M7, ...): sets --model and "
                              "--features together. The paper and "
                              "reproduce_all.sh address configurations this way.")
-    parser.add_argument("--model", type=str, required=False, default=None, choices=["bpr_mf", "lightgcn", "lightgcn_sf", "xsimgcl", "simgcl", "lightgcl", "kar"])
+    parser.add_argument("--model", type=str, required=False, default=None, choices=["bpr_mf", "lightgcn", "lightgcn_sf", "xsimgcl", "simgcl", "lightgcl"])
     parser.add_argument("--features", type=str, default="none", choices=list(FEATURE_CONFIGS.keys()))
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--lr", type=float, default=LEARNING_RATE)
@@ -228,7 +217,7 @@ def main():
 
     # Build adjacency for GNN models
     norm_adj = None
-    if args.model in ("lightgcn", "lightgcn_sf", "xsimgcl", "simgcl", "lightgcl", "kar"):
+    if args.model in ("lightgcn", "lightgcn_sf", "xsimgcl", "simgcl", "lightgcl"):
         logger.info("Building normalized adjacency matrix...")
         norm_adj = data.get_norm_adj().to(device)
 
@@ -236,7 +225,7 @@ def main():
     model = build_model(args.model, data.n_users, data.n_items, feature_dim, norm_adj)
 
     # Set features for models that accept side features
-    if args.model in ("lightgcn_sf", "kar") and feature_names:
+    if args.model in ("lightgcn_sf",) and feature_names:
         item_features = feature_loader.get_combined_tensor(feature_names, device=device)
         model.set_features(item_features)
 

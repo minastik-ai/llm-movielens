@@ -26,8 +26,15 @@ url: "https://huggingface.co/datasets/minastik-ai/llm-movielens"
 # second `identifiers` entry here, because cffconvert emits that one in
 # preference to this field and every generated citation would then split.
 doi: "10.5281/zenodo.22766653"
-license: CC-BY-4.0
-license-url: "https://creativecommons.org/licenses/by/4.0/"
+# The release is SPLIT and this field must say so: code, harness, datasheet,
+# prompt manifest and human-evaluation sheets are CC BY 4.0; the generated
+# profiles and their embeddings are CC BY-NC 4.0, reflecting the non-commercial
+# terms of the sources they were generated from. Declaring only CC-BY-4.0 here
+# told every citation tool that the data half permits commercial use.
+license:
+  - CC-BY-4.0
+  - CC-BY-NC-4.0
+license-url: "https://github.com/minastik-ai/llm-movielens/blob/main/LICENSE"
 abstract: >-
   Pipeline and evaluation harness for LLM-synthesized item profiles. A language
   model reads an item's structured metadata and writes a profile of 80-120

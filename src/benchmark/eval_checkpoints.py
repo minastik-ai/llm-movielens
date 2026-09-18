@@ -12,9 +12,8 @@ Eval is deterministic given the weights (model.eval() disables contrastive noise
 so the 5-seed mean reproduces the paper exactly.
 
     python3 eval_checkpoints.py                              # base ML-20M, all 14 M-configs
-    python3 eval_checkpoints.py --dataset amazon             # Amazon m4/m5/m6/m7/m8
     python3 eval_checkpoints.py --configs m5 m6              # subset
-    python3 eval_checkpoints.py --dataset amazon --device cpu
+    python3 eval_checkpoints.py --configs m4 --device cpu
 """
 from __future__ import annotations
 import argparse
@@ -39,9 +38,9 @@ logger = logging.getLogger(__name__)
 B = Path(__file__).resolve().parent          # code/benchmark
 CODE_ROOT = B.parent                          # code/
 ENC = "bge-large-en-v1.5"
-GNN = {"lightgcn", "lightgcn_sf", "xsimgcl", "simgcl", "lightgcl", "kar", "hypernet_replacer"}
-FEAT_MODELS = {"lightgcn_sf", "kar", "hypernet_replacer"}  # models that take item side-features
-RLABEL = {"r2": "R2", "r3": "R3"}                          # leaf "config" label override
+GNN = {"lightgcn", "lightgcn_sf", "xsimgcl", "simgcl", "lightgcl"}
+FEAT_MODELS = {"lightgcn_sf"}                              # models that take item side-features
+RLABEL = {}                                                # leaf "config" label override
 
 # config dir -> (model, features key). Superset; per-dataset subset chosen below.
 SPEC = {
@@ -52,9 +51,6 @@ SPEC = {
     "m5":  ("lightgcn_sf", "llm_mood"),   "m6":  ("lightgcn_sf", "llm_themes"),
     "m7":  ("lightgcn_sf", "llm_prof_mood"), "m8": ("lightgcn_sf", "llm_all"),
     "m9":  ("lightgcn_sf", "genome_llm"),
-    # Tier-3 replacers (project models, d=128, profile+mood; same evaluate_model path as M7):
-    "r2":  ("kar", "llm_prof_mood"),  "r3": ("hypernet_replacer", "llm_prof_mood"),
-    "r2_retuned": ("kar", "llm_prof_mood"),  # Amazon per-dataset-retuned R2 (wd=1e-4); ckpt regenerated 2026-06
 }
 
 # Per-dataset: data dir, embedding dir, configs to eval, paper NDCG@10 anchors.
@@ -62,33 +58,10 @@ DATASETS = {
     "": dict(  # base ML-20M
         data=B / "data" / "processed",
         emb=EMBEDDING_DIR,
-        configs=["m0", "m1", "m1b", "m1c", "m1d", "m2", "m2b", "m3", "m4", "m5", "m6", "m7", "m8", "m9", "r2", "r3"],
+        configs=["m0", "m1", "m1b", "m1c", "m1d", "m2", "m2b", "m3", "m4", "m5", "m6", "m7", "m8", "m9"],
         anchors={"m0": 0.1137, "m1": 0.1139, "m1b": 0.1132, "m1c": 0.1144, "m1d": 0.1136,
                  "m2": 0.1144, "m2b": 0.1140, "m3": 0.1136, "m4": 0.1173, "m5": 0.1149,
-                 "m6": 0.1102, "m7": 0.1175, "m8": 0.1156, "m9": 0.1150, "r2": 0.1145, "r3": 0.1099},
-    ),
-    "amazon": dict(  # Amazon-Books (paper Table amazon_tier1 + r2/r3 retune apps)
-        data=B / "data" / "processed_amazon",
-        emb=CODE_ROOT / "embedding_generator" / "output_amazon" / ENC,
-        configs=["m4", "m5", "m6", "m7", "m8", "r2", "r2_retuned", "r3"],
-        anchors={"m1": 0.0334, "m4": 0.0561, "m5": 0.0543, "m6": 0.0525, "m7": 0.0563, "m8": 0.0536,
-                 # r2 = original-protocol (paper headline Table amazon_tier1); r2_retuned = per-dataset
-                 # retune (App. r2_retune), checkpoint regenerated 2026-06 (5-seed mean 0.0440 ≈ paper 0.0439).
-                 "r2": 0.0401, "r2_retuned": 0.0440, "r3": 0.0497},
-    ),
-    "ml1m": dict(  # ML-1M cross-density (paper Table ml1m_cross_density + r2/r3 retune)
-        data=B / "data" / "processed_ml1m",
-        emb=CODE_ROOT / "embedding_generator" / "output_ml1m" / ENC,
-        configs=["r2", "r2_retuned", "r3"],
-        # r2 = original-protocol (paper headline Table ml1m_cross_density, 0.1677); r2_retuned =
-        # per-dataset retune (App. r2_retune, 0.1680; no-op +0.2% n.s.), checkpoint regenerated 2026-06.
-        anchors={"r2": 0.1677, "r2_retuned": 0.1680, "r3": 0.1669},
-    ),
-    "ml20m_sub163": dict(  # subsampled-ML-20M control; reuses the base ML-20M content features
-        data=B / "data" / "processed_ml20m_sub163",
-        emb=EMBEDDING_DIR,
-        configs=["r2", "r3"],
-        anchors={"r2": 0.1021, "r3": 0.1034},
+                 "m6": 0.1102, "m7": 0.1175, "m8": 0.1156, "m9": 0.1150},
     ),
     "ml20m_gpt4omini": dict(  # cross-LLM GPT side (paper Table cross_llm_downstream / Table 8)
         data=B / "data" / "processed",  # SAME ML-20M interactions; only the profile FEATURES are GPT-4o-mini's
@@ -200,12 +173,6 @@ def main() -> int:
                 # needs only norm_adj, so build without set_adj and attach it directly.
                 model = build_model(model_name, data.n_users, data.n_items, feat_dim, None)
                 model.norm_adj = norm_adj
-            elif model_name == "hypernet_replacer":
-                # R3: not in run_experiment.build_model; same predict/set_features/set_adj
-                # interface as LightGCN-SF. embed_dim=128, n_layers=3, hidden=256 (project defaults).
-                from models.hypernet_replacer import HypernetReplacer
-                model = HypernetReplacer(data.n_users, data.n_items, EMBED_DIM, LIGHTGCN_LAYERS, feat_dim, 256)
-                model.set_adj(norm_adj)
             else:
                 model = build_model(model_name, data.n_users, data.n_items, feat_dim,
                                     norm_adj if model_name in GNN else None)

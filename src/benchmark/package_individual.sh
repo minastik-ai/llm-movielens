@@ -55,8 +55,6 @@ package_experiment() {
     cp "$BENCH_DIR/models/simgcl.py" "$stage/benchmark/models/"
     cp "$BENCH_DIR/models/xsimgcl.py" "$stage/benchmark/models/"
     cp "$BENCH_DIR/models/lightgcl.py" "$stage/benchmark/models/"
-    cp "$BENCH_DIR/models/kar.py" "$stage/benchmark/models/"
-    cp "$BENCH_DIR/models/sasrec.py" "$stage/benchmark/models/"
 
     # Processed data (shared by all)
     cp "$BENCH_DIR/data/processed/"*.csv "$stage/benchmark/data/processed/"
@@ -200,8 +198,6 @@ should_package M1b && package_experiment M1b simgcl none 42 10
 should_package M1c && package_experiment M1c xsimgcl none 42 10
 should_package M1d && package_experiment M1d lightgcl none 42 10
 
-# Tier 3: LLM-for-RecSys methods
-should_package R3  && package_experiment R3  kar llm_prof_mood 42 10
 
 echo ""
 echo "=== All packages created in $PKG_DIR/ ==="
