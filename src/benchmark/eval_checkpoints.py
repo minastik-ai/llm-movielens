@@ -103,9 +103,18 @@ def genome_raw_features(item_map: dict, device: str) -> torch.Tensor:
     """Reconstruct the 1128-dim raw genome tag-relevance matrix aligned to benchmark
     item ids (M2b). Mirrors scripts/run_cold_start_eval.py:_genome_raw_features."""
     import pandas as pd
-    ml = CODE_ROOT / "profile_generator" / "llm-movie-profiler-v1-20260402" / "data" / "ml-20m"
-    scores = pd.read_csv(ml / "genome-scores.csv")
-    tags = pd.read_csv(ml / "genome-tags.csv")
+    # config resolves ML-20M through its candidate list, which puts the
+    # documented download_ml20m.sh target first. This used to hardcode the
+    # generation-time path, which does not exist in a clone, so M2b's eval path
+    # was as unreachable for a reader as its training path was.
+    from config import GENOME_SCORES_CSV, GENOME_TAGS_CSV
+    if not GENOME_SCORES_CSV.exists():
+        raise FileNotFoundError(
+            "M2b's raw genome features are built from the MovieLens genome scores,\n"
+            f"which we do not redistribute:\n    {GENOME_SCORES_CSV}\n"
+            "Fetch MovieLens first:\n        bash scripts/download_ml20m.sh")
+    scores = pd.read_csv(GENOME_SCORES_CSV)
+    tags = pd.read_csv(GENOME_TAGS_CSV)
     tag_idx = {tid: i for i, tid in enumerate(sorted(tags["tagId"].unique()))}
     feat = np.zeros((len(item_map), len(tags)), dtype=np.float32)
     # vectorized fill (equivalent to the per-row loop in run_cold_start_eval, ~100x faster)

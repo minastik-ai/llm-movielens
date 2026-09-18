@@ -49,7 +49,6 @@ fi
 
 TOTAL=$((${#CONFIGS[@]} * ${#SEEDS[@]}))
 CURRENT=0
-SKIPPED=0
 FAILED=0
 
 echo "=== LLM-MovieLens Benchmark Reproduction ==="
@@ -111,29 +110,9 @@ fi
 
 START_TIME=$(date +%s)
 
-# M2b is the raw 1,128-d genome dimensionality control. Its features are built
-# from genome-scores.csv by the EVAL path (eval_checkpoints.py); the training
-# loader never implemented `genome_raw`, so every M2b run here failed with
-# "Unknown feature" and counted as five failures in the summary. Skip it
-# explicitly and say why, rather than spending five crashes to say the same.
-SKIP_TRAINING="M2b"
-
 for config in "${CONFIGS[@]}"; do
     for seed in "${SEEDS[@]}"; do
         CURRENT=$((CURRENT + 1))
-        if [[ " ${SKIP_TRAINING} " == *" ${config} "* ]]; then
-            if [ "$seed" = "${SEEDS[0]}" ]; then
-                echo "[${CURRENT}/${TOTAL}] ${config} -- SKIPPED, not trainable from this script"
-                echo "  ${config} is the raw 1,128-d genome control. Its features come from"
-                echo "  genome-scores.csv through the evaluation path, not the training loader:"
-                echo "      python3 ${BENCH_DIR}/eval_checkpoints.py"
-                # ${x,,} is bash 4; macOS ships bash 3.2 and answers "bad
-                # substitution" at RUNTIME, which `bash -n` does not catch.
-                echo "  Its per-seed results ship in results/$(echo "$config" | tr 'A-Z' 'a-z')/."
-            fi
-            SKIPPED=$((SKIPPED + 1))
-            continue
-        fi
         # Run the entry point directly. The previous form invoked
         # `python -m llm_movielens.benchmark.run_experiment`, a package that does
         # not exist in the release, so every one of the 70 experiments failed with
@@ -166,9 +145,8 @@ if [ "$DRY_RUN" = true ]; then
     # statement in the output of the command the README tells a reader to run first.
     echo "Dry run: listed ${TOTAL} experiments, ran none."
 else
-    echo "Completed: $((CURRENT - FAILED - SKIPPED))/${TOTAL}"
+    echo "Completed: $((CURRENT - FAILED))/${TOTAL}"
     echo "Failed: ${FAILED}"
-    [ "$SKIPPED" -gt 0 ] && echo "Skipped (not trainable here): ${SKIPPED}"
     echo "Time: $((ELAPSED / 3600))h $((ELAPSED % 3600 / 60))m $((ELAPSED % 60))s"
 fi
 

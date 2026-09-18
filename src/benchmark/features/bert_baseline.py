@@ -17,12 +17,18 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import normalize
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from config import MOVIES_CSV, MOVIE_ID_INDEX, EMBED_DIM
+from config import MOVIES_CSV, MOVIE_ID_INDEX, EMBED_DIM, BERT_TITLE_EMB_NPY
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-OUTPUT_PATH = Path(__file__).parent.parent.parent / "embedding_generator" / "output" / "bge-large-en-v1.5" / "bert_title_embeddings.npy"
+# Import the path instead of restating it. This used to spell out
+# output/bge-large-en-v1.5/bert_title_embeddings.npy while the benchmark reads
+# config.BERT_TITLE_EMB_NPY, which is the PARENT output/ dir on purpose -- the
+# title embeddings do not depend on which encoder produced the profiles. So a
+# reader who ran this exactly as documented still could not run M3: the
+# generator wrote one path and the loader read another.
+OUTPUT_PATH = BERT_TITLE_EMB_NPY
 
 
 def main():

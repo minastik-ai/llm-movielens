@@ -104,14 +104,15 @@ class FeatureLoader:
             # and this loader never implemented it. reproduce_all.sh nonetheless
             # lists M2b in TIER2, so the documented sweep used to die here on a
             # bare "Unknown feature" with nothing pointing at the eval path.
+            # genome_raw (M2b) is the raw 1,128-d genome tag-relevance matrix. It
+            # is not a file: it is built straight from genome-scores.csv. Only the
+            # EVAL path implemented it, so reproduce_all.sh -- which lists M2b --
+            # died here on "Unknown feature", and M2b was the one configuration in
+            # the paper that nobody could train from the release. Built here with
+            # the same vectorised fill as eval_checkpoints.genome_raw_features so
+            # the two paths cannot diverge.
             if name == "genome_raw":
-                raise ValueError(
-                    "feature 'genome_raw' (configuration M2b) is not available to the\n"
-                    "training loader. It is the raw 1,128-dimension genome control, built\n"
-                    "directly from genome-scores.csv by the evaluation path:\n"
-                    "        python3 src/benchmark/eval_checkpoints.py\n"
-                    "M2b's per-seed results ship in results/m2b/, and the other thirteen\n"
-                    "configurations train from this loader as normal.")
+                return self._genome_raw()
             raise ValueError(f"Unknown feature: {name}. Available: {list(self._feature_files.keys())}")
 
         # Two of these five are NOT in the released download, because they encode
@@ -155,6 +156,40 @@ class FeatureLoader:
 
         self._cache[name] = aligned
         return aligned
+
+    def _genome_raw(self) -> np.ndarray:
+        """Raw 1,128-d genome tag-relevance matrix for M2b, aligned to benchmark ids.
+
+        Already aligned to item_map, so it does NOT go through self.alignment --
+        that mapping is for arrays stored in genome-index order.
+        """
+        if "genome_raw" in self._cache:
+            return self._cache["genome_raw"]
+
+        import pandas as pd
+        from config import GENOME_SCORES_CSV, GENOME_TAGS_CSV
+
+        if not GENOME_SCORES_CSV.exists():
+            raise FileNotFoundError(
+                "feature 'genome_raw' (configuration M2b) is built from the MovieLens\n"
+                "genome scores, which we do not redistribute:\n"
+                f"    {GENOME_SCORES_CSV}\n"
+                "Fetch MovieLens first:\n"
+                "        bash scripts/download_ml20m.sh")
+
+        tags = pd.read_csv(GENOME_TAGS_CSV)
+        tag_idx = {tid: i for i, tid in enumerate(sorted(tags["tagId"].unique()))}
+        feat = np.zeros((self.n_items, len(tags)), dtype=np.float32)
+
+        s = pd.read_csv(GENOME_SCORES_CSV)
+        s["bench"] = s["movieId"].map(self.item_map)
+        s["tcol"] = s["tagId"].map(tag_idx)
+        s = s.dropna(subset=["bench"])
+        feat[s["bench"].to_numpy(dtype=int),
+             s["tcol"].to_numpy(dtype=int)] = s["relevance"].to_numpy(dtype=np.float32)
+
+        self._cache["genome_raw"] = feat
+        return feat
 
     def get_combined(self, feature_names: List[str]) -> np.ndarray:
         """Concatenate multiple features along dim=1."""

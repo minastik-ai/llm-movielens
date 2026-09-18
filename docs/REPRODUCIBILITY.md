@@ -43,14 +43,12 @@ python3 scripts/download_artifacts.py
 #     item universe off the profiles, so it has to come after step 2.
 python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m
 
-# 3. Run the experiments. Ten of the fourteen configurations train from what
-#    steps 1-2 give you; the sweep reports the other four rather than crashing:
-#      M2, M3, M9  need two feature sets that encode MovieLens content (genome
-#                  PCA, BERT titles) and so are not ours to redistribute --
-#                  build them locally with Stage 2 of Option B below.
-#      M2b         the raw 1,128-d genome control, whose features come from the
-#                  evaluation path rather than the training loader; its per-seed
-#                  results ship in results/m2b/.
+# 3. Run the experiments. Eleven of the fourteen configurations train from what
+#    steps 1-2 give you. The other three -- M2, M3 and M9 -- need two feature
+#    sets that encode MovieLens content (the genome PCA and the BERT title
+#    baseline) rather than generated text, so they are not ours to redistribute;
+#    build them from your own copy with Stage 2 of Option B, then re-run. The
+#    benchmark names the generator if you reach them without it.
 bash scripts/reproduce_all.sh --dry-run   # print the plan first; needs no data
 bash scripts/reproduce_all.sh
 
