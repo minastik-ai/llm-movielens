@@ -98,9 +98,54 @@ class FeatureLoader:
             return self._cache[name]
 
         if name not in self._feature_files:
+            # genome_raw (M2b, the raw 1,128-d genome dimensionality control) is
+            # real but is NOT a training feature: it is built from
+            # genome-scores.csv by eval_checkpoints.py and run_cold_start_eval.py,
+            # and this loader never implemented it. reproduce_all.sh nonetheless
+            # lists M2b in TIER2, so the documented sweep used to die here on a
+            # bare "Unknown feature" with nothing pointing at the eval path.
+            if name == "genome_raw":
+                raise ValueError(
+                    "feature 'genome_raw' (configuration M2b) is not available to the\n"
+                    "training loader. It is the raw 1,128-dimension genome control, built\n"
+                    "directly from genome-scores.csv by the evaluation path:\n"
+                    "        python3 src/benchmark/eval_checkpoints.py\n"
+                    "M2b's per-seed results ship in results/m2b/, and the other thirteen\n"
+                    "configurations train from this loader as normal.")
             raise ValueError(f"Unknown feature: {name}. Available: {list(self._feature_files.keys())}")
 
-        raw = np.load(self._feature_files[name])
+        # Two of these five are NOT in the released download, because they encode
+        # MovieLens content rather than generated text and are not ours to
+        # redistribute: a reader has to build them from their own ML-20M copy.
+        # Reaching np.load without this check produced a bare FileNotFoundError
+        # traceback out of numpy -- the same defect the movie_id_index guard above
+        # was written to fix, for a sibling path in this same file. The configs
+        # that need them (M2, M3, M9) are in the paper's results table, so this is
+        # the failure a reader following "skip stages 1-2" actually hits.
+        path = self._feature_files[name]
+        if not path.exists():
+            how = {
+                "genome": "python3 src/embedding_generator/main.py\n"
+                          "        (PCA of the MovieLens genome scores)",
+                "bert_title": "cd src/benchmark && python3 features/bert_baseline.py\n"
+                              "        (BERT encodings of the MovieLens titles)",
+            }.get(name)
+            if how:
+                raise FileNotFoundError(
+                    f"feature {name!r} needs a file that is not in the release:\n"
+                    f"    {path}\n"
+                    "It encodes MovieLens content, which we do not redistribute, so\n"
+                    "scripts/download_artifacts.py does not fetch it. Build it from your\n"
+                    "own ML-20M copy:\n"
+                    f"        {how}\n"
+                    "Configurations needing it: genome -> M2, M9; bert_title -> M3.\n"
+                    "The other configurations need nothing further.")
+            raise FileNotFoundError(
+                f"feature {name!r} is missing its file:\n    {path}\n"
+                "Fetch the released embeddings with:\n"
+                "        python3 scripts/download_artifacts.py")
+
+        raw = np.load(path)
         feat_dim = raw.shape[1]
 
         # Align to benchmark item IDs

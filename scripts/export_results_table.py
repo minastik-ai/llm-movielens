@@ -14,6 +14,7 @@ Usage:
 
 import argparse
 import json
+import sys
 import logging
 from collections import defaultdict
 from pathlib import Path
@@ -54,13 +55,32 @@ def collect_results(results_dir: Path) -> dict:
     """Collect per-seed results into {config: {metric: [values]}}."""
     data = defaultdict(lambda: defaultdict(list))
 
-    for result_file in sorted(results_dir.glob("*/results.json")):
-        exp_name = result_file.parent.name  # e.g., "bpr_mf__none__seed42"
+    # experiment_path() in benchmark/config.py is the authority on the layout and
+    # writes <config>/<encoder>/seed-<n>/results.json. The shipped results/ tree
+    # has the same shape. This used to glob "*/results.json" -- a flat layout
+    # nothing produces any more -- and look for a "config_name" key that neither
+    # a shipped file nor a fresh run writes, so the documented step 4 of the
+    # reproduction guide reported "No results found. Run experiments first."
+    # against a fresh run AND against the released tree, and exited 0.
+    files = sorted(results_dir.glob("*/*/seed-*/results.json"))
+    if not files:                      # legacy flat layout, for older trees
+        files = sorted(results_dir.glob("*/results.json"))
+
+    for result_file in files:
+        exp_name = result_file.parent.name
 
         with open(result_file) as f:
             result = json.load(f)
 
-        config = result.get("config_name", exp_name)
+        # `config` is the label ("M4") in a shipped per-seed file but a dict of
+        # hyperparameters in a fresh run, so it cannot be the key on its own.
+        # `experiment` is "m4/<encoder>/seed-42" in both.
+        cfg = result.get("config")
+        if isinstance(cfg, str):
+            config = cfg
+        else:
+            stem = (result.get("experiment") or "").split("/")[0]
+            config = (stem[0].upper() + stem[1:]) if stem else exp_name
         test_metrics = result.get("test_metrics", {})
 
         for metric in METRICS:
@@ -163,8 +183,12 @@ def main():
         data = collect_results(results_dir / "per_seed")
 
     if not data:
-        logger.error("No results found. Run experiments first.")
-        return
+        logger.error(
+            "No results found under %s. Train something first, e.g.\n"
+            "        bash scripts/reproduce_all.sh --config M0\n"
+            "    or point --results-dir at the shipped per-seed tree (results/).",
+            results_dir)
+        sys.exit(2)          # cannot judge: nothing to export, not a clean run
 
     logger.info(f"Found results for {len(data)} configs")
 

@@ -79,13 +79,22 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="report only, write nothing")
+    # The targets are DATA files. In a code clone the default path cannot exist,
+    # which made the shipped invocation unusable; this is how a reader points it
+    # at their own checkout or download of the dataset repository.
+    ap.add_argument("--release-dir", type=Path, default=RELEASE, metavar="DIR",
+                    help="root of the dataset repository to audit "
+                         f"(default: {RELEASE})")
     a = ap.parse_args()
+    release = a.release_dir
 
     total_wc = total_id = 0
+    missing = []
     for rel, idf in TARGETS:
-        p = RELEASE / rel
+        p = release / rel
         if not p.exists():
             log(f"  MISSING {rel}")
+            missing.append(rel)
             continue
         d = load(p)
         wc, ids = audit(d, idf)
@@ -138,6 +147,22 @@ def main():
         f"{'would be' if a.check else ''} repaired")
     if not a.check and (total_wc or total_id):
         log("  NEXT: regenerate SHA256SUMS in release/hf (the file hashes have changed)")
+
+    # These files live in the DATA repository, not this one. Run from a code
+    # clone, every target is absent -- and this used to print "0 fields would be
+    # repaired" and exit 0, which reads as a passed audit over nothing examined.
+    # Exit 2 is the project's "cannot judge": not a pass, not a failure.
+    if len(missing) == len(TARGETS):
+        log(f"\n  CANNOT JUDGE: none of the {len(TARGETS)} target files is present, so")
+        log( "  nothing was examined. They are data files and ship in the dataset")
+        log(f"  repository, not the code repository; this looked under:")
+        log(f"    {release}")
+        log( "  Point --release-dir at a checkout or download of that repository.")
+        sys.exit(2)
+    if missing:
+        log(f"\n  PARTIAL: {len(missing)} of {len(TARGETS)} target file(s) absent, "
+            "so the totals above cover only what was present.")
+        sys.exit(2)
 
 
 if __name__ == "__main__":

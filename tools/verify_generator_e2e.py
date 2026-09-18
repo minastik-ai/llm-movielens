@@ -2,7 +2,8 @@
 """End-to-end check of the RELEASED generator against the RELEASED artifact.
 
 The paper's contribution is a pipeline. A reader must be able to establish three
-things without spending a cent, and this script establishes all three:
+things about it, and this script establishes 1 and 3 from the release alone, with
+no API key and no spending:
 
   1. TRANSPORT-ONLY.  batch_generate.py and main.py assemble byte-identical
      requests -- same system prompt, same per-movie user prompt, same model,
@@ -12,6 +13,10 @@ things without spending a cent, and this script establishes all three:
   2. THE CODE MATCHES THE RELEASE.  Re-rendering prompts with the shipped code
      reproduces the SHA-256 values in the released prompt manifest.  If the
      prompt had drifted since generation, the hashes would diverge.
+     This one needs MORE than the release: a prompt embeds a TMDb synopsis and
+     keyword list, which are not ours to redistribute, so the cache is absent
+     from a clone and this check reports CANNOT JUDGE (exit 2) rather than a
+     failure.  Rebuilding that cache needs your own TMDB_API_KEY.
 
   3. THE VALIDATOR ACCEPTS THE ARTIFACT.  The shipped validate_profile_json()
      accepts every released profile.  A validator that rejects the release would
@@ -19,7 +24,7 @@ things without spending a cent, and this script establishes all three:
 
 Calls no API.  Usage:  python verify_generator_e2e.py [--sample N]
 """
-import argparse, hashlib, json, os, sys, types
+import argparse, hashlib, importlib.util, json, os, sys, types
 from pathlib import Path
 
 # Published layout first, working-tree layout second. A verifier that only runs on
@@ -46,6 +51,7 @@ MANIFEST = (_find_up(_HERE.parent, "manifest/prompt_manifest.jsonl",
             or _HERE.parents[1] / "manifest" / "prompt_manifest.jsonl")
 
 FAIL = []
+UNJUDGEABLE = []   # a check whose INPUT is absent, which is not the same as a failure
 
 
 
@@ -97,7 +103,19 @@ def main():
     if not GEN.exists():
         sys.exit(f"generator package not found at {GEN}")
 
-    need = GEN / "data" / "ml-20m" / "genome-tags.csv"
+    # Resolve the source data the way the LOADER does, not by a second guess.
+    # settings.py tries three layouts, the documented download_ml20m.sh target
+    # (<repo>/data/raw/ml-20m) first; this guard used to hardcode the third, the
+    # generation-time layout. A reader who had run download_ml20m.sh exactly as
+    # documented was told to run download_ml20m.sh -- the command that had just
+    # succeeded -- and had no way out of the loop. Import is side-effect free:
+    # settings.py pulls in os and pathlib only, and resolves against its own
+    # __file__ rather than the cwd, so reading it before the chdir below is safe.
+    _spec = importlib.util.spec_from_file_location(
+        "_pg_settings_probe", GEN / "config" / "settings.py")
+    _settings = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_settings)
+    need = _settings.DATA_DIR / "genome-tags.csv"
     if not need.exists():
         sys.exit(
             "This check re-renders every prompt, so it needs the SOURCE data, which we\n"
@@ -166,13 +184,32 @@ def main():
           and header["temperature"] == settings.CLAUDE_TEMPERATURE
           and header["max_tokens"] == settings.CLAUDE_MAX_TOKENS)
 
+    # The prompts embed TMDb metadata, and the TMDb cache is NOT redistributable,
+    # so it is excluded from the release. tmdb_crawler.load_cache() fails OPEN --
+    # it returns {} when the file is absent -- and every prompt then renders with
+    # "PLOT: No overview available. / DIRECTOR: Unknown / CAST: Unknown". The
+    # hashes cannot match, and reporting that as FAILED told a reader that the
+    # released code does not reproduce the released artifact, which is false and
+    # is the worst thing this script could say. An absent input is "cannot judge".
     subset = movies if args.sample == 0 else movies[:: max(1, len(movies) // args.sample)]
-    bad = [m["movie_id"] for m in subset
-           if recs.get(m["movie_id"], {}).get("prompt_sha256") != sha(m["user_prompt"])]
-    check(f"re-rendered prompt hashes match ({len(subset):,} movies checked)",
-          not bad, f"{len(bad)} mismatch" if bad else "every hash reproduced")
-    if bad[:3]:
-        print(f"         first mismatches: {bad[:3]}")
+    if not tmdb:
+        label = f"re-rendered prompt hashes match ({len(subset):,} movies would be checked)"
+        print(f"  [-- ] {label} -- SKIPPED, the TMDb metadata cache is absent")
+        print(f"         The prompts embed TMDb plot, keywords, cast and crew. That cache is")
+        print(f"         source material we do not redistribute, so it is not in the release:")
+        print(f"           {settings.METADATA_CACHE}")
+        print(f"         Rebuild it with your own key (TMDB_API_KEY, ~10,381 lookups) and")
+        print(f"         re-run to check this. Note that TMDb edits its records, so a cache")
+        print(f"         crawled today may legitimately differ from the one used in 2026-04.")
+        print(f"         The other checks in this script do not depend on it.")
+        UNJUDGEABLE.append(label)
+    else:
+        bad = [m["movie_id"] for m in subset
+               if recs.get(m["movie_id"], {}).get("prompt_sha256") != sha(m["user_prompt"])]
+        check(f"re-rendered prompt hashes match ({len(subset):,} movies checked)",
+              not bad, f"{len(bad)} mismatch" if bad else "every hash reproduced")
+        if bad[:3]:
+            print(f"         first mismatches: {bad[:3]}")
     check("manifest covers the whole catalogue",
           len(recs) == header["n_prompts"] == 10381, f"{len(recs):,} records")
 
@@ -192,6 +229,15 @@ def main():
     print()
     if FAIL:
         sys.exit(f"FAILED: {len(FAIL)} check(s) -- " + "; ".join(FAIL))
+    if UNJUDGEABLE:
+        # Exit 2, not 0 and not 1: everything checkable passed, but one check
+        # could not run. A reader scripting this must be able to tell the three
+        # apart, and a green line over a skipped check is how a gate starts lying.
+        print("end-to-end: every check that could run passed, and both transports "
+              "are equivalent.")
+        print(f"CANNOT JUDGE: {len(UNJUDGEABLE)} check(s) had no input -- "
+              + "; ".join(UNJUDGEABLE))
+        sys.exit(2)
     print("end-to-end: released code reproduces the released artifact's inputs, "
           "and both transports are equivalent.")
 

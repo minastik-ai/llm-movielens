@@ -1,8 +1,15 @@
 # Artifact verification — 2026-09-02
 
-Ran against the staged release in `release/hf/` and the generating code. Everything
-below was *measured*, not read off a README. One defect found, in the paper's prose
+Ran against the released data files and the generating code. Everything below was
+*measured*, not read off a README. One defect was found, in the paper's prose
 rather than in the data.
+
+**Status: the defect this audit found has since been corrected.** This file is kept
+as the dated record of what was measured, not as a list of open problems, so the
+section below still reads as it did on the day. The wording it proposed is the
+wording the paper and the datasheet now carry — see "Output and validation" in the
+paper and the generation section of [DATASHEET.md](DATASHEET.md). The one item still
+open is the missing `batch_generator.py`, at the end of this file.
 
 ## Structural invariants — all hold
 
@@ -48,8 +55,8 @@ title slugs (`"beverly_hills_cop_iii"`, `"la_confidential_1997"`,
 `"the-black-hole-1979"`) and year-derived numbers (`1995001` for movie 175,
 `1989001`, `3456`, `0`).
 
-**The number 22 has no source.** It appears as a literal in three places across two
-papers and is generated from nothing. The substitution never logged when it fired,
+**The number 22 has no source.** It appears as a literal in three places and is
+generated from nothing. The substitution never logged when it fired,
 and no run log contains a repair record.
 
 **The artifact is not affected.** Because the substitution is unconditional, the
@@ -57,7 +64,7 @@ released `movie_profiles.json` has **0/10,381** identifier mismatches. The data 
 right; only the explanation is wrong — and the released code contradicts it in
 three lines a reviewer reads for free.
 
-### Suggested replacement
+### Suggested replacement — adopted
 
 > The generating model does not reliably reproduce the item identifier: in a
 > 766-response sample it never did, emitting nulls, title slugs or year-derived
@@ -146,13 +153,24 @@ produced part of the released artifact is not in the released code** — for a p
 whose contribution is the pipeline, that is a reproducibility gap independent of
 the wording issues above.
 
+What the release does carry for that stage is `batch_generate.py`, a Batches-API
+driver for the same generation step, and `tools/verify_generator_e2e.py`, which
+re-renders all 10,381 prompts with the shipped code and checks them against the
+SHA-256 values in the released manifest. So the prompts behind the artifact are
+reproducible from the released code; what is missing is the historical submission
+and retry driver those logs were written by, and with it any way to re-derive the
+per-attempt failure counts tabulated above.
+
 ## Reproducing
 
 <!-- The released copy of this document ships in the code repository, where the
      tool is staged under tools/ and the data repository is a separate download. -->
 ```bash
-python3 tools/fix_derived_fields.py --check    # self-describing field audit
+# Both commands audit DATA, so they need a checkout or download of the dataset
+# repository -- the code repository does not contain these files. Without one,
+# the first reports CANNOT JUDGE (exit 2) rather than a silent pass over nothing.
+python3 tools/fix_derived_fields.py --check --release-dir DATASET_DIR
 
-# In a checkout of the companion data repository:
+# From inside DATASET_DIR:
 shasum -a 256 -c SHA256SUMS                    # 55/55
 ```

@@ -25,7 +25,11 @@ pip install -r requirements.txt
 
 ## Option A: Reproduce from Pre-computed Features (Recommended)
 
-Skip stages 1-2 and use our pre-computed embeddings from HuggingFace.
+Skip stages 1-2 for the LLM-generated features and use our pre-computed
+embeddings from HuggingFace. The two feature sets that encode MovieLens content
+rather than generated text -- the genome PCA and the BERT title baseline -- are
+not ours to redistribute, so the three configurations built on them still need a
+local Stage 2; step 3 below says which.
 
 ```bash
 # 1. Fetch MovieLens 20M under its own terms (we do not redistribute it)
@@ -39,7 +43,14 @@ python3 scripts/download_artifacts.py
 #     item universe off the profiles, so it has to come after step 2.
 python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m
 
-# 3. Run all experiments (14 configurations × 5 seeds = 70 runs)
+# 3. Run the experiments. Ten of the fourteen configurations train from what
+#    steps 1-2 give you; the sweep reports the other four rather than crashing:
+#      M2, M3, M9  need two feature sets that encode MovieLens content (genome
+#                  PCA, BERT titles) and so are not ours to redistribute --
+#                  build them locally with Stage 2 of Option B below.
+#      M2b         the raw 1,128-d genome control, whose features come from the
+#                  evaluation path rather than the training loader; its per-seed
+#                  results ship in results/m2b/.
 bash scripts/reproduce_all.sh --dry-run   # print the plan first; needs no data
 bash scripts/reproduce_all.sh
 
@@ -90,6 +101,16 @@ python3 tools/verify_paper_numbers.py
 
 Regenerate everything from scratch.
 
+### Stage 0: The source catalogue
+
+Every stage below reads MovieLens 20M, which we do not redistribute, so fetch it
+first — including for the dry run, which assembles the real prompts and is
+therefore what makes it worth running before you spend anything.
+
+```bash
+bash scripts/download_ml20m.sh
+```
+
 ### Stage 1: Profile Generation
 
 Requires API keys:
@@ -124,7 +145,13 @@ cd src/benchmark && python3 features/bert_baseline.py && cd ../..
 
 ### Stage 3: Benchmark
 
+The benchmark reads its splits from inside its own package, and nothing earlier in
+Option B writes them, so rebuild them first — from your own MovieLens download and
+the profiles Stage 1 produced, whose item universe defines the split.
+
 ```bash
+python3 tools/rebuild_splits.py --ml20m-dir data/raw/ml-20m
+
 # Full reproduction (70 runs)
 bash scripts/reproduce_all.sh
 
@@ -144,12 +171,16 @@ numbers no table accounts for.
 # Recompute every headline number from the shipped per-seed files (CPU, seconds)
 python3 tools/verify_paper_numbers.py
 
-# Check that the released code still reproduces the released artifact
-# (needs the source data; re-renders all 10,381 prompts and checks their SHA-256)
+# Check that the released code still reproduces the released artifact.
+# Two of its three parts need only the release. The prompt-digest part re-renders
+# the prompts, and a prompt embeds a TMDb synopsis and keyword list that are not
+# ours to redistribute -- so with only MovieLens fetched, that part reports
+# CANNOT JUDGE (exit 2) and names what it would need. It is not a failure.
 python3 tools/verify_generator_e2e.py
 
-# Export your own run as a table
-python3 scripts/export_results_table.py
+# Export your own run as a table. A fresh run writes inside the benchmark
+# package, so point the exporter there; bare, it reads the shipped results/.
+python3 scripts/export_results_table.py --results-dir src/benchmark/results
 ```
 
 ## Random Seeds

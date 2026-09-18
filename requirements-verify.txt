@@ -1,0 +1,13 @@
+# Everything the CPU-only verifier needs, and nothing else.
+#
+# tools/verify_paper_numbers.py imports numpy and scipy. That is the whole
+# dependency set for recomputing every headline number in the paper from the
+# per-seed result files that ship here -- no GPU, no model download, no API key,
+# a couple of seconds.
+#
+# The full requirements.txt resolves to 71 packages including torch and
+# sentence-transformers, because it also covers generation (stage 1), encoding
+# (stage 2) and the benchmark (stage 3). Install that one when you intend to run
+# the pipeline; install this one to check the paper.
+numpy>=1.24.0,<3.0
+scipy>=1.10.0,<2.0

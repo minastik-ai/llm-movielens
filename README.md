@@ -30,14 +30,17 @@ The fastest way to see whether this resource is what it claims is to recompute t
 paper's numbers yourself. It needs no GPU, no model download and no API key.
 
 ```bash
-python3 --version              # 3.10 or newer
-pip install -r requirements.txt
+python3 --version                          # 3.10 or newer
+pip install -r requirements-verify.txt     # numpy and scipy, ~150 MB
 python3 tools/verify_paper_numbers.py
 ```
 
 It reads the per-seed result files shipped in `results/` and recomputes the main
 results table, the paired *t*-tests and the pre-registered leakage verdict, in a
-couple of seconds. Keeping it CPU-only is deliberate: a resource whose claims can
+couple of seconds. The verifier needs only those two packages; the full
+`requirements.txt` resolves to 71, including `torch`, because it also covers
+generation, encoding and the benchmark. Install that one when you intend to run
+the pipeline, not to check the paper. Keeping it CPU-only is deliberate: a resource whose claims can
 only be re-checked on a cluster stops being re-checked.
 
 ## What is in here
