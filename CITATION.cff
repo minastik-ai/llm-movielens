@@ -3,12 +3,12 @@ title: "LLM-MovieLens: A Portable Pipeline and Testbed for LLM-Synthesized Item 
 message: >-
   If you use this resource, please cite the paper. The DOI below is the concept
   DOI, which always resolves to the newest release; each release also has its own
-  version DOI, listed on the Zenodo record — v1.0's is 10.5281/zenodo.22766654.
+  version DOI, listed on that release's Zenodo record.
 type: dataset
 # The RELEASE version, not the CFF schema version above. Kept equal to
 # metadata/croissant.json's "version" -- two files naming different versions of
 # one artifact is what a reader notices first.
-version: "1.0"
+version: "1.1"
 authors:
   - family-names: Duong
     given-names: Tan Nghia
@@ -21,10 +21,12 @@ authors:
 repository-code: "https://github.com/minastik-ai/llm-movielens"
 url: "https://huggingface.co/datasets/minastik-ai/llm-movielens"
 # The CONCEPT DOI: it resolves to the newest version, so a citation made from
-# this file aggregates across releases instead of splitting per version. v1.0's
-# own DOI is 10.5281/zenodo.22766654, listed on the Zenodo record; it is NOT a
+# this file aggregates across releases instead of splitting per version. Each
+# release's own version DOI is on its Zenodo record and is deliberately NOT a
 # second `identifiers` entry here, because cffconvert emits that one in
-# preference to this field and every generated citation would then split.
+# preference to this field and every generated citation would then split. Naming
+# a specific version DOI in this file is also what goes stale at the next
+# release, which is why neither the message above nor this comment does.
 doi: "10.5281/zenodo.22766653"
 # The release is SPLIT and this field must say so: code, harness, datasheet,
 # prompt manifest and human-evaluation sheets are CC BY 4.0; the generated
