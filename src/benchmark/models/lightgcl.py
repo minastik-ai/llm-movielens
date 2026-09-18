@@ -51,30 +51,42 @@ class LightGCL(nn.Module):
         self._compute_svd_adj()
 
     def _compute_svd_adj(self):
-        """Compute low-rank SVD approximation of the adjacency matrix."""
-        adj = self.norm_adj
-        # Convert to dense for SVD (on the user-item bipartite subblock)
-        # Extract the user→item block: top-right of shape (n_users, n_items)
-        adj_dense = adj.to_dense()
-        ui_block = adj_dense[:self.n_users, self.n_users:]
+        """Rank-q SVD view of the user-item block, kept in FACTORED form.
 
-        # Truncated SVD
-        U, S, Vh = torch.linalg.svd(ui_block, full_matrices=False)
-        U_q = U[:, :self.svd_q]
-        S_q = S[:self.svd_q]
-        Vh_q = Vh[:self.svd_q, :]
+        This used to densify: `norm_adj.to_dense()` on the (n_users+n_items)^2
+        adjacency, then `torch.zeros(n, n)` for the reconstruction. At ML-20M
+        scale that is 75.4 GB each, so the model could not be constructed on an
+        ordinary machine and M1d was the one configuration in the paper that a
+        reader could not retrain at all -- its released numbers come from
+        eval-only re-evaluation of a checkpoint. It also ran a FULL SVD of a
+        127,371 x 9,906 dense matrix to keep five singular vectors.
 
-        # Reconstruct: user→item block approximation
-        ui_svd = U_q @ torch.diag(S_q) @ Vh_q
+        The factors are the same object the method is defined in terms of: a
+        rank-q reconstruction of the normalised user-item block. Propagation
+        multiplies by them directly (see `_propagate_svd`), so the (n, n) matrix
+        is never formed. svd_lowrank is randomised, so the view differs slightly
+        from an exact truncation; niter is raised for accuracy.
+        """
+        adj = self.norm_adj.coalesce()
+        device = adj.device
 
-        # Rebuild full symmetric adjacency from reconstructed block
-        # Original structure: [[0, R], [R^T, 0]] (normalized)
-        n = self.n_users + self.n_items
-        svd_dense = torch.zeros(n, n, device=adj.device)
-        svd_dense[:self.n_users, self.n_users:] = ui_svd
-        svd_dense[self.n_users:, :self.n_users] = ui_svd.T
+        # Factor on the CPU regardless of the training device. MPS has partial
+        # sparse support and svd_lowrank's get_approximate_basis densifies there,
+        # which asks for a 60.44 GiB buffer (n_users^2 x 4 bytes) and aborts. On
+        # the CPU the same call is a couple of seconds, and only the q=5 factors
+        # move to the device.
+        idx, val = adj.indices().cpu(), adj.values().cpu()
+        keep = (idx[0] < self.n_users) & (idx[1] >= self.n_users)
+        block = torch.sparse_coo_tensor(
+            torch.stack([idx[0][keep], idx[1][keep] - self.n_users]),
+            val[keep], (self.n_users, self.n_items)).coalesce()
 
-        self.svd_adj = svd_dense.to_sparse()
+        U, S, V = torch.svd_lowrank(block, q=self.svd_q, niter=10)
+        # Buffers, so .to(device) keeps moving them with the module afterwards.
+        self.register_buffer("svd_u", U.to(device).contiguous(), persistent=False)
+        self.register_buffer("svd_s", S.to(device).contiguous(), persistent=False)
+        self.register_buffer("svd_v", V.to(device).contiguous(), persistent=False)
+        self.svd_adj = None          # never materialised; see _propagate_svd
 
     def _propagate(self, adj):
         """LightGCN propagation with given adjacency."""
@@ -90,6 +102,30 @@ class LightGCL(nn.Module):
         item_final = final[self.n_users:]
         return user_final, item_final
 
+    def _propagate_svd(self):
+        """Propagation on the rank-q SVD view, without ever forming it.
+
+        The view is [[0, R], [R^T, 0]] with R = U diag(S) V^T, so for
+        X = [X_u; X_i]:
+            (view @ X)_users = U (S * (V^T X_i))
+            (view @ X)_items = V (S * (U^T X_u))
+        Both are rank-q products -- q is 5 -- so this is cheap and exact for
+        the factored view.
+        """
+        all_emb = torch.cat([self.user_emb.weight, self.item_emb.weight], dim=0)
+        emb_list = [all_emb]
+        s = self.svd_s.unsqueeze(1)
+
+        for _ in range(self.n_layers):
+            x_u, x_i = all_emb[:self.n_users], all_emb[self.n_users:]
+            top = self.svd_u @ (s * (self.svd_v.t() @ x_i))
+            bot = self.svd_v @ (s * (self.svd_u.t() @ x_u))
+            all_emb = torch.cat([top, bot], dim=0)
+            emb_list.append(all_emb)
+
+        final = torch.stack(emb_list, dim=0).mean(dim=0)
+        return final[:self.n_users], final[self.n_users:]
+
     def _infonce_loss(self, view1, view2):
         view1 = F.normalize(view1, dim=-1)
         view2 = F.normalize(view2, dim=-1)
@@ -100,8 +136,8 @@ class LightGCL(nn.Module):
     def forward(self, users, pos_items, neg_items):
         # Main view: propagate on original adjacency
         user_final, item_final = self._propagate(self.norm_adj)
-        # Contrastive view: propagate on SVD-reconstructed adjacency
-        user_svd, item_svd = self._propagate(self.svd_adj)
+        # Contrastive view: propagate on the factored SVD view
+        user_svd, item_svd = self._propagate_svd()
 
         u = user_final[users]
         p = item_final[pos_items]

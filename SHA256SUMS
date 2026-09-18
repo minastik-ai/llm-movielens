@@ -8,7 +8,7 @@ ab51ab66f082b49ac0157db0135ebc2451406ee9a333bc8fc251e1fe1ec2361f  ./README.md
 5bf3eb108543b84a325ca1875157a47eccc802ec789759fabec449b3793f8481  ./docs/HUMAN_EVAL_PROTOCOL.md
 d2fc1fd9faf4ca868c475cfc18129f469e95c5e6f962913a1018b96313cd8f7c  ./docs/LICENSING_SURVEY.md
 7e2962a3e7cfab8054a086b30feb24c27d8242e9e637f5a098b5bf9c04218ea7  ./docs/READING_THE_BENCHMARK.md
-18808164176dad4fd9c5ead8c23f316ec27d17c2ac86842c75e5616b2ac62f46  ./docs/REPRODUCIBILITY.md
+1395444605863f6a9fe3bf0b04c2942331de724b9232a0be20d7043c202779e2  ./docs/REPRODUCIBILITY.md
 6bd3846a340eec2075789af6cc53cd728f800973cf0469e011eb6805556253c5  ./manifest/prompt_manifest.jsonl
 21f63add5fe10f05cb36c4070de0ee8754b21217f0ad93d0b46058386f5b8e21  ./paper/generated/ablation_macros.tex
 d762b99f25ee72413e87f083a83220081d0a3bcc82366060f06310e32d30ca88  ./paper/generated/bucket_macros.tex
@@ -223,7 +223,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ./src/benchmar
 6677be8f12bc4fbd498eb01a74b90df75688bf9fc92771ba688f49976a0a57e2  ./src/benchmark/models/bpr_mf.py
 5f2074ac6c5f248807a655e55b10587858401e77ec8bcb9f8f9dbf0264226d87  ./src/benchmark/models/hypernet_replacer.py
 b1cce84ffdca07c887e62c913c3e021a30d909517db2ff77a04b2e860293ce0e  ./src/benchmark/models/kar.py
-599a69f1168aec331ff2f2f7b513385fffe5b2fa354ae6b997ccc2ec9964b402  ./src/benchmark/models/lightgcl.py
+1f95f32b0f7e4e559576f9f6e994d5e3dfcb5b5559e25d6f59aeae83218b458a  ./src/benchmark/models/lightgcl.py
 22bd4f8577d0e160a22022c15376e0a001828f964d8719c5efde5bc2251fb19a  ./src/benchmark/models/lightgcn.py
 c2117597938b5f47ca61b5f5aa51ade50738934aa427639ea78733c3a0092e79  ./src/benchmark/models/simgcl.py
 22df6f0c1234c3e30e3459ce0afe81c846f714dc6a8aa01a25f7ec644d81d724  ./src/benchmark/models/xsimgcl.py

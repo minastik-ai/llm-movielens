@@ -194,3 +194,23 @@ Note: Full determinism requires `torch.use_deterministic_algorithms(True)`, whic
 
 1. **CUDA non-determinism:** Results may differ slightly across GPU architectures
 2. **TMDb API rate limits:** Profile generation may take longer if rate-limited
+3. **The contrastive baselines need GPU memory proportional to the batch,
+   squared.** M1b, M1c and M1d compute an InfoNCE loss over a
+   batch x batch similarity matrix. At the default `BATCH_SIZE` of 32,768 that
+   is 4 GiB per view before gradients, which is comfortable on a 40 GB card and
+   out of memory on a 16 GB one. Reduce it rather than giving up on the
+   configuration:
+
+   ```bash
+   python3 src/benchmark/run_experiment.py --config M1d --seed 42 --batch-size 4096
+   ```
+
+   The optimiser sees more, smaller steps, so a reduced batch is a change to the
+   training recipe, not just to memory use: expect a small shift from the
+   reported numbers and say so if you report your own.
+4. **Apple silicon works.** The device selector falls back `cuda -> mps -> cpu`,
+   so the benchmark runs on an M-series Mac without CUDA. It is slower than the
+   table above: one LightGCN-SF epoch on ML-20M takes about six minutes on an
+   M4-class laptop against the ~20 minutes quoted for a *whole* single-GPU run,
+   so budget hours per configuration rather than minutes, or use it to smoke-test
+   with `--epochs 1` and run the full sweep on a GPU.
