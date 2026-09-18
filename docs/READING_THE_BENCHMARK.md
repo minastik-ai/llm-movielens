@@ -87,7 +87,7 @@ to the learned embedding, it actively pulls them together.
 <!-- BEGIN GENERATED feature-diagnostics -->
 <!-- Generated block. Regenerated in the paper repository, which is not shipped here; the numbers are computed from the released arrays under embeddings/ml20m/. -->
 
-| Primitive | Dim | Distinct items (of 10,381) | All-zero rows |
+| Primitive | Dim | Distinct vectors (of 10,381 items) | All-zero rows |
 |---|---|---|---|
 | profile (M4) | 1,024 | 10,381 | 0 |
 | mood (M5) | 10 | 10,352 | 0 |

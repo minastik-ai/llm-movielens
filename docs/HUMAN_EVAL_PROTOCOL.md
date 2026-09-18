@@ -3,9 +3,13 @@
 > **Purpose:** This document is the step-by-step operational protocol used for the human evaluation reported in the paper (the human-evaluation section and its appendix). The paper's human-evaluation
 > table and that appendix carry the final 500-profile / 30-pilot results from applying this protocol. The protocol is reproduced here so that other researchers can replicate the evaluation methodology on their own LLM-generated profile corpora.
 >
-> **Timeline:** 5-7 days total (1 day prep, 1 day pilot, 3-4 days main round, 1 day analysis)
+> **Timeline:** about two weeks (1 day prep, 1 day pilot, ~33 hours of main-round rating spread over 8-10 days, 1 day analysis)
 >
-> **Cost:** ~$270 total (3 annotators × ~6 hours × $15/hour)
+> **Cost:** ~$1,300 total (3 annotators × ~36 hours × $12/hour). Earlier revisions of this
+> document said ~$270 at 6 hours each. That undercounted the work twice over: an annotator
+> rates BOTH providers' profile for each of the 500 sampled films, so 1,000 profiles and
+> 5,000 ratings, and at the two-minutes-per-profile pace budgeted in the annotation schedule below that is ~33 hours
+> of rating before the pilot, the calibration meeting and the mood task.
 
 ---
 
@@ -47,10 +51,10 @@ These are all included in the CSV exports.
 **Requirements:**
 - Graduate students in CS, Information Science, or related field
 - Familiarity with movies (no domain expertise required — TMDb reference is provided)
-- Available for ~6 hours over 5 days
+- Available for ~36 hours over about two weeks (see the cost note above)
 - Can work independently (no collaboration during annotation)
 
-**Compensation:** $15/hour (document local minimum wage compliance)
+**Compensation:** $12/hour (document local minimum wage compliance)
 
 ---
 
@@ -93,18 +97,17 @@ figure appears in the paper and none is released.
 ### 2.1 Distribute Main Materials
 
 Give each annotator:
-- **`main_500.csv`** — all 500 profiles (same set for all 3)
+- **`main_500.csv`** — all 500 films, each carrying two profiles to rate (one per provider,
+  blinded as `profile_a` / `profile_b`), so 1,000 profiles per annotator; same set for all 3
 - **Updated guidelines** with calibration addenda
 - **Annotation spreadsheet** (one per annotator)
 
 ### 2.2 Annotation Schedule
 
-Recommended pacing (to avoid fatigue):
-- **Day 3:** Profiles 1-200 (~3 hours with breaks)
-- **Day 4:** Profiles 201-400 (~3 hours)
-- **Day 5:** Profiles 401-500 + mood pairwise task (~2 hours)
-
-Each profile takes ~2 minutes to rate across all 5 axes. Budget 10-second breaks between profiles.
+Each profile takes ~2 minutes to rate across all 5 axes, and each row carries two of them,
+so budget ~4 minutes per row and ~33 hours for the 500 rows. Pace it to avoid fatigue: about
+4 hours a day over 8-10 days, in blocks of no more than 2 hours, with 10-second breaks between
+profiles. Do the mood pairwise task (~45 minutes) last.
 
 ### 2.3 Mood Pairwise Task (Day 5)
 
