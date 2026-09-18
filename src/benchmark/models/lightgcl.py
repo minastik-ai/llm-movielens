@@ -81,7 +81,19 @@ class LightGCL(nn.Module):
             torch.stack([idx[0][keep], idx[1][keep] - self.n_users]),
             val[keep], (self.n_users, self.n_items)).coalesce()
 
-        U, S, V = torch.svd_lowrank(block, q=self.svd_q, niter=10)
+        # svd_lowrank draws its random test matrix from the GLOBAL RNG, which
+        # would make the contrastive view depend on the seed -- and on exactly how
+        # much RNG was consumed before construction. The exact truncated SVD this
+        # replaces was a deterministic property of the graph, identical for every
+        # seed, so reproduce that: draw from a fixed local stream and put the
+        # global one back, leaving the training stream untouched (which is what
+        # lets a resumed run reproduce an uninterrupted one).
+        _rng = torch.random.get_rng_state()
+        try:
+            torch.manual_seed(0)
+            U, S, V = torch.svd_lowrank(block, q=self.svd_q, niter=10)
+        finally:
+            torch.random.set_rng_state(_rng)
         # Buffers, so .to(device) keeps moving them with the module afterwards.
         self.register_buffer("svd_u", U.to(device).contiguous(), persistent=False)
         self.register_buffer("svd_s", S.to(device).contiguous(), persistent=False)

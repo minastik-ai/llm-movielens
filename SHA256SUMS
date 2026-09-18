@@ -223,7 +223,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ./src/benchmar
 6677be8f12bc4fbd498eb01a74b90df75688bf9fc92771ba688f49976a0a57e2  ./src/benchmark/models/bpr_mf.py
 5f2074ac6c5f248807a655e55b10587858401e77ec8bcb9f8f9dbf0264226d87  ./src/benchmark/models/hypernet_replacer.py
 b1cce84ffdca07c887e62c913c3e021a30d909517db2ff77a04b2e860293ce0e  ./src/benchmark/models/kar.py
-1f95f32b0f7e4e559576f9f6e994d5e3dfcb5b5559e25d6f59aeae83218b458a  ./src/benchmark/models/lightgcl.py
+c8248b76ce4f952d09de41ffdc0c0022e7ecbfd643e9e4e94532c40dcee50984  ./src/benchmark/models/lightgcl.py
 22bd4f8577d0e160a22022c15376e0a001828f964d8719c5efde5bc2251fb19a  ./src/benchmark/models/lightgcn.py
 c2117597938b5f47ca61b5f5aa51ade50738934aa427639ea78733c3a0092e79  ./src/benchmark/models/simgcl.py
 22df6f0c1234c3e30e3459ce0afe81c846f714dc6a8aa01a25f7ec644d81d724  ./src/benchmark/models/xsimgcl.py
