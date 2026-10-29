@@ -265,7 +265,7 @@ resolves to the newest archived record.
 - LLM-generated profiles and embeddings (`profiles/`, `embeddings/`), and the six `human_eval/` files that reproduce generated profile text or mood vectors (`annotator_sheet.csv`, the three `annotator_sheet_filled_A*.csv`, `gpt4o_mini_profiles.json` and `mood_pairwise_key.json`): CC BY-NC 4.0.
   They are our output, but generated from inputs whose terms are non-commercial
   (MovieLens, TMDb) or unstated (RLMRec's book descriptions); research use is
-  unrestricted
+  permitted
 - Everything else we made — code, harness, results, the rest of the human evaluation, metadata and
   documentation: CC BY 4.0
 - MovieLens 20M: GroupLens Research terms; not redistributed

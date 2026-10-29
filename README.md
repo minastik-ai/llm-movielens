@@ -233,7 +233,7 @@ Code, metadata, the datasheet and the rest of the human-evaluation data are **CC
 profiles and their embeddings, and the six `human_eval/` files that reproduce profile text or mood vectors (named in `LICENSE`), are **CC BY-NC 4.0** — our output, but generated from
 inputs whose terms are non-commercial (MovieLens, TMDb) or unstated (RLMRec's book
 descriptions), so the condition reflects the upstream position rather than a
-preference of ours. Research use is unrestricted under both.
+preference of ours. Research use is permitted under both.
 
 This product uses the TMDb API but is not endorsed or certified by TMDb.
 
