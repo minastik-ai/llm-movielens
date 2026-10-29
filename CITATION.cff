@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+title: "LLM-MovieLens: A Portable Pipeline and Testbed for LLM-Synthesized Item Profiles"
+message: >-
+  If you use this resource, please cite the paper and the archived record. The DOI
+  below always resolves to the newest archived record; each archived record also
+  has its own DOI, listed on its Zenodo page.
+type: dataset
+# No `version` here: the version belongs to the archived record on Zenodo, and a
+# second place naming it is one more place to disagree.
+date-released: 2026-10-30
+authors:
+  - family-names: Duong
+    given-names: Tan Nghia
+    orcid: "https://orcid.org/0000-0002-2442-6263"
+    affiliation: "Hanoi University of Science and Technology; Minastik Technology JSC"
+  - family-names: Tran
+    given-names: Manh Hoang
+    orcid: "https://orcid.org/0000-0002-0572-2091"
+    affiliation: "Hanoi University of Science and Technology"
+repository-code: "https://github.com/minastik-ai/llm-movielens"
+url: "https://huggingface.co/datasets/minastik-ai/llm-movielens"
+# The CONCEPT DOI: it resolves to the newest archived record, so a citation made
+# from this file aggregates instead of splitting per record. A single record's own
+# DOI is deliberately NOT a second `identifiers` entry here, because cffconvert
+# emits that one in preference to this field and every generated citation would
+# then split.
+doi: "10.5281/zenodo.22766653"
+# The release is SPLIT and this field says so: code, harness, datasheet, prompt
+# manifest and the human-evaluation data other than six files named in LICENSE are
+# CC BY 4.0; the generated profiles, their embeddings and those six files are
+# CC BY-NC 4.0, reflecting the non-commercial terms of the sources they were
+# generated from. Declaring only CC-BY-4.0 would tell citation tools that the data
+# half permits commercial use.
+license:
+  - CC-BY-4.0
+  - CC-BY-NC-4.0
+license-url: "https://github.com/minastik-ai/llm-movielens/blob/main/LICENSE"
+abstract: >-
+  Pipeline and evaluation harness for LLM-synthesized item profiles. A language
+  model reads an item's structured metadata and writes a profile of 80-120
+  requested words (95-135 realised), a 10-axis mood vector and 3-6 key themes; the harness evaluates whether the
+  resulting representation outperforms the structured description consumed
+  directly, under a temporal split, five seeds and full ranking. Code and
+  the human-evaluation data other than six files are CC BY 4.0; the generated profiles,
+  their embeddings and those six files are CC BY-NC 4.0, reflecting upstream terms.
+keywords:
+  - recommender systems
+  - large language models
+  - item representation
+  - MovieLens
+  - resource

@@ -1,0 +1,51 @@
+{
+  "experiment": "m3/bge-large-en-v1.5/seed-456",
+  "best_epoch": 95,
+  "total_epochs_trained": 115,
+  "stopped_early": true,
+  "best_val_metrics": {
+    "HR@10": 0.2921306607275427,
+    "Recall@10": 0.030787293201892586,
+    "NDCG@10": 0.07110865551488062,
+    "HR@20": 0.3890126206384558,
+    "Recall@20": 0.05418313327777248,
+    "NDCG@20": 0.0722486677623428,
+    "HR@50": 0.5278396436525612,
+    "Recall@50": 0.10745728996539422,
+    "NDCG@50": 0.08401718110692162,
+    "MRR": 0.14832677405934716,
+    "n_eval_users": 2694
+  },
+  "test_metrics": {
+    "HR@10": 0.4279228149829739,
+    "Recall@10": 0.04794008864749354,
+    "NDCG@10": 0.11402717336813742,
+    "HR@20": 0.5395384033295497,
+    "Recall@20": 0.0809330191526149,
+    "NDCG@20": 0.1131129326046607,
+    "HR@50": 0.6878547105561862,
+    "Recall@50": 0.15161955637844202,
+    "NDCG@50": 0.12755906408388581,
+    "MRR": 0.240630977430242,
+    "n_eval_users": 2643
+  },
+  "config": {
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "num_epochs": 200,
+    "patience": 20,
+    "patience_unit": "epochs",
+    "batch_size": 32768,
+    "min_epochs": 0,
+    "dense_eval_until": 0,
+    "eval_every": 5
+  },
+  "data": {
+    "n_users": 127371,
+    "n_items": 9906,
+    "n_train": 11499778,
+    "n_val": 49668,
+    "n_test": 67466
+  },
+  "model_hparams": null
+}

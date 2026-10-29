@@ -1,0 +1,64 @@
+LICENCES — this release is split, because the parts differ in what they derive from.
+
+────────────────────────────────────────────────────────────────────────────
+CC BY 4.0   https://creativecommons.org/licenses/by/4.0/
+────────────────────────────────────────────────────────────────────────────
+  In the data release (HuggingFace):
+  human_eval/        ratings, mood-pair sheets, sample lists, derived results
+                     (every file there except the six named under CC BY-NC below)
+  metadata/          Croissant record, prompt manifest
+
+  In the code release (GitHub):
+  src/               profile generator, embedding generator, benchmark harness
+  scripts/           every run script behind the paper
+  tools/             verifier, split rebuilder, figure and table generators
+  results/           per-seed result files produced by the harness
+  manifest/          SHA-256 records
+  paper/             the generated macro files the paper's numbers come from
+  docs/              datasheet, reproducibility guide, protocol, surveys
+
+These are our own work end to end. Nothing in them derives from a third-party
+source, so they carry no upstream restriction and are offered under the most
+permissive terms we can grant, commercial use included.
+
+────────────────────────────────────────────────────────────────────────────
+CC BY-NC 4.0   https://creativecommons.org/licenses/by-nc/4.0/
+────────────────────────────────────────────────────────────────────────────
+  profiles/          LLM-generated item profiles, mood vectors, key themes
+  embeddings/        encodings of that generated text, and composites of them
+  human_eval/        the six files that reproduce generated profile text or mood
+                     vectors: annotator_sheet.csv, annotator_sheet_filled_A1.csv, _A2.csv,
+                     _A3.csv, gpt4o_mini_profiles.json and mood_pairwise_key.json
+
+The text and mood vectors in profiles/, and the same where they appear in human_eval/, were
+written by a language model. For the films it was
+shown TMDb metadata and MovieLens tag-genome scores, whose terms are
+non-commercial; for the books, Open Library records and RLMRec's descriptions,
+which state no licence. It is our output, but it is generated FROM those
+inputs, and we cannot grant rights we do not hold. The non-commercial condition therefore reflects the upstream
+position, not a preference of ours. Research use is unrestricted: academic and
+industry researchers alike may use these files for research.
+
+If you want these artifacts for a commercial purpose, contact the authors —
+this restriction can be revisited if the upstream permissions widen.
+
+────────────────────────────────────────────────────────────────────────────
+NOT COVERED — not redistributed here, and not ours to licence
+────────────────────────────────────────────────────────────────────────────
+  MovieLens 20M interaction data, tag genome, genre strings
+      (c) GroupLens Research, University of Minnesota.
+      https://grouplens.org/datasets/movielens/20m/ — obtain under their terms.
+      No permission from GroupLens is required for this release, because none
+      of their data is redistributed in it. Rebuild the benchmark splits with
+      rebuild_splits.py from your own copy.
+  TMDb metadata — obtain with your own API key.
+  Open Library records used for the book catalogue (CC0). The book records
+      here carry their titles, which CC0 permits.
+  RLMRec's generated item profiles, read as the book descriptions
+      (https://github.com/HKUDS/RLMRec). Its data download states no licence;
+      the Apache-2.0 licence in that repository covers its code. None of
+      RLMRec's text is redistributed here.
+
+ATTRIBUTION
+Cite the accompanying paper. This product uses the TMDB API but is not
+endorsed, certified, or otherwise approved by TMDB.

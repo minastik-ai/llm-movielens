@@ -1,0 +1,23 @@
+{
+  "n_paired": 10381,
+  "metrics": {
+    "Len": {
+      "agg": 115.02918793950487,
+      "noagg": 114.97900009632983,
+      "delta": -0.05018784317503844,
+      "p": 0.540146305879975
+    },
+    "Ttr": {
+      "agg": 0.8296768583575949,
+      "noagg": 0.8301731658538809,
+      "delta": 0.0004963074962860414,
+      "p": 0.16364064462150182
+    }
+  },
+  "corpus_ttr_matched_budget": {
+    "budget_tokens": 1193597,
+    "agg": 0.016729264567521534,
+    "noagg": 0.01659018915094458
+  },
+  "_provenance": "pre-registered descriptive control on the two prompt sets; lengths recomputed from the profile text, not read from the word_count field"
+}

@@ -1,0 +1,149 @@
+{
+  "protocol": "Zero-shot controllable retrieval. 100 random query items, +0.5 mood offset on target axis, top-10 retrieval, score = 70%*profile_cos + 30%*mood_proximity. Controllability = (retrieved-set mean axis-coord shift) / requested_offset. Drift = mean abs shift on the other 9 axes (lower = cleaner control).",
+  "per_axis": {
+    "dark_light": {
+      "axis_idx": 0,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.1529500037431717,
+      "std_target_axis_shift": 0.22595712542533875,
+      "mean_baseline_shift": 0.029999990016222,
+      "controllability_score": 0.3059000074863434,
+      "mean_off_axis_drift": 0.17046111822128296
+    },
+    "serious_playful": {
+      "axis_idx": 1,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.1753000020980835,
+      "std_target_axis_shift": 0.29268595576286316,
+      "mean_baseline_shift": 0.048600006848573685,
+      "controllability_score": 0.350600004196167,
+      "mean_off_axis_drift": 0.17020557820796967
+    },
+    "slow_fast": {
+      "axis_idx": 2,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.13785000145435333,
+      "std_target_axis_shift": 0.2185792624950409,
+      "mean_baseline_shift": 0.0032999974209815264,
+      "controllability_score": 0.27570000290870667,
+      "mean_off_axis_drift": 0.17720557749271393
+    },
+    "cerebral_visceral": {
+      "axis_idx": 3,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.13090001046657562,
+      "std_target_axis_shift": 0.20321455597877502,
+      "mean_baseline_shift": -0.035450004041194916,
+      "controllability_score": 0.26180002093315125,
+      "mean_off_axis_drift": 0.17666999995708466
+    },
+    "realistic_fantastical": {
+      "axis_idx": 4,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.25620001554489136,
+      "std_target_axis_shift": 0.32036682963371277,
+      "mean_baseline_shift": 0.06690000742673874,
+      "controllability_score": 0.5124000310897827,
+      "mean_off_axis_drift": 0.16950000822544098
+    },
+    "intimate_epic": {
+      "axis_idx": 5,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.15644998848438263,
+      "std_target_axis_shift": 0.1662195473909378,
+      "mean_baseline_shift": -0.00944999884814024,
+      "controllability_score": 0.31289997696876526,
+      "mean_off_axis_drift": 0.1801999807357788
+    },
+    "conventional_experimental": {
+      "axis_idx": 6,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.12239998579025269,
+      "std_target_axis_shift": 0.18277668952941895,
+      "mean_baseline_shift": 0.001799997640773654,
+      "controllability_score": 0.24479997158050537,
+      "mean_off_axis_drift": 0.1727944314479828
+    },
+    "emotional_detached": {
+      "axis_idx": 7,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.13715000450611115,
+      "std_target_axis_shift": 0.30794796347618103,
+      "mean_baseline_shift": -0.013500002212822437,
+      "controllability_score": 0.2743000090122223,
+      "mean_off_axis_drift": 0.16467779874801636
+    },
+    "nostalgic_contemporary": {
+      "axis_idx": 8,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.1802000105381012,
+      "std_target_axis_shift": 0.1765507310628891,
+      "mean_baseline_shift": -0.01719999685883522,
+      "controllability_score": 0.3604000210762024,
+      "mean_off_axis_drift": 0.18195556104183197
+    },
+    "predictable_subversive": {
+      "axis_idx": 9,
+      "n_queries": 100,
+      "requested_offset": 0.5,
+      "mean_target_axis_shift": 0.09004998952150345,
+      "std_target_axis_shift": 0.19555993378162384,
+      "mean_baseline_shift": -0.013849999755620956,
+      "controllability_score": 0.1800999790430069,
+      "mean_off_axis_drift": 0.1721888929605484
+    }
+  },
+  "mean_controllability": 0.30789000242948533,
+  "mean_off_axis_drift": 0.17358589470386504,
+  "ranked_high_to_low": [
+    [
+      "realistic_fantastical",
+      0.5124000310897827
+    ],
+    [
+      "nostalgic_contemporary",
+      0.3604000210762024
+    ],
+    [
+      "serious_playful",
+      0.350600004196167
+    ],
+    [
+      "intimate_epic",
+      0.31289997696876526
+    ],
+    [
+      "dark_light",
+      0.3059000074863434
+    ],
+    [
+      "slow_fast",
+      0.27570000290870667
+    ],
+    [
+      "emotional_detached",
+      0.2743000090122223
+    ],
+    [
+      "cerebral_visceral",
+      0.26180002093315125
+    ],
+    [
+      "conventional_experimental",
+      0.24479997158050537
+    ],
+    [
+      "predictable_subversive",
+      0.1800999790430069
+    ]
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "what": "Settings of the three contrastive baselines (M1b SimGCL, M1c XSimGCL, M1d LightGCL). Each method's own hyperparameters were selected on validation NDCG@10 at seed 42 by scripts/contrastive_grid.py and frozen before any reported run; run_experiment.py applies them to these models unless a flag overrides them.",
+  "rule": "best validation NDCG@10 at seed 42; exact ties go to the smaller value; a winner at the end of a searched range extends along its ladder and the stage re-selects",
+  "run": {
+    "init": "uniform",
+    "min_epochs": 45,
+    "dense_eval_until": 20
+  },
+  "chosen": {
+    "m1d": {
+      "hp": {
+        "cl_weight": 0.2,
+        "cl_temp": 1.0
+      },
+      "trace": [
+        "cl_temp: best 0.5 is at the end of [0.1, 0.2, 0.5]; extending to 1",
+        "cl_temp: chose 1 from [0.1, 0.2, 0.5, 1.0] (val NDCG@10 0.06081) -- at the end of its ladder, so not bracketed"
+      ],
+      "selection_runs": [
+        8,
+        9,
+        10,
+        12
+      ],
+      "frozen_at": "2026-10-09T03:30:06+00:00"
+    },
+    "m1b": {
+      "hp": {
+        "cl_weight": 0.1,
+        "cl_eps": 0.1,
+        "cl_temp": 0.2
+      },
+      "trace": [
+        "cl_weight: chose 0.1 from [0.05, 0.1, 0.2, 0.5] (val NDCG@10 0.07057)"
+      ],
+      "selection_runs": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "frozen_at": "2026-10-09T16:01:42+00:00"
+    },
+    "m1c": {
+      "hp": {
+        "cl_weight": 0.02,
+        "cl_eps": 0.1,
+        "cl_temp": 0.2,
+        "layer_cl": 1
+      },
+      "trace": [
+        "cl_weight: best 0.05 is at the end of [0.05, 0.1, 0.2]; extending to 0.02",
+        "cl_weight: best 0.02 is at the end of [0.02, 0.05, 0.1, 0.2]; extending to 0.01",
+        "cl_weight: chose 0.02 from [0.01, 0.02, 0.05, 0.1, 0.2] (val NDCG@10 0.07017)",
+        "layer_cl: chose 1 from [1, 2, 3] (val NDCG@10 0.07017) -- at the end of the searched range, which the protocol does not extend",
+        "cl_eps: chose 0.1 from [0.05, 0.1, 0.2] (val NDCG@10 0.07017)"
+      ],
+      "selection_runs": [
+        5,
+        6,
+        7,
+        11,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "frozen_at": "2026-10-11T02:04:47+00:00"
+    }
+  },
+  "chosen_sha256": "8d6b07798b58e298a3f71de28eec2f519d456d40fdb9b987f280a57c9e67386d",
+  "chosen_sha256_of": "sha256(json.dumps(chosen, sort_keys=True)) -- recompute it to check the record"
+}

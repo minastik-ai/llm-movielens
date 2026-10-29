@@ -1,0 +1,12 @@
+# Running the test suite needs one package the release itself does not import.
+# It is kept out of the top-level requirements.txt, whose policy is to declare
+# what shipped CODE imports directly, so a reader who only wants to reproduce the
+# numbers does not install a test runner.
+#
+#   pip install -r tests/requirements.txt && pytest tests/
+pytest>=7.0,<10.0
+# Three test modules import numpy directly to build the arrays they assert on.
+# Without it they ERROR at collection instead of skipping, and pytest stops at
+# the first error — so the suite a reviewer sees is not a smaller suite, it is
+# no suite at all.
+numpy>=1.24.0,<3.0

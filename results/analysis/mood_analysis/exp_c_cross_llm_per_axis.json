@@ -1,0 +1,73 @@
+{
+  "claude_model": "claude-haiku-4-5",
+  "gpt_model": "gpt-4o-mini",
+  "n_movies": 10381,
+  "per_axis_pearson_r": {
+    "dark_light": 0.9061496257781982,
+    "serious_playful": 0.8951561450958252,
+    "slow_fast": 0.7121217250823975,
+    "cerebral_visceral": 0.5471674203872681,
+    "realistic_fantastical": 0.7287489771842957,
+    "intimate_epic": 0.5598129034042358,
+    "conventional_experimental": 0.499125212430954,
+    "emotional_detached": 0.48016035556793213,
+    "nostalgic_contemporary": -0.07385726273059845,
+    "predictable_subversive": 0.6042189598083496
+  },
+  "per_axis_spearman_rho": {
+    "dark_light": 0.9200600424384964,
+    "serious_playful": 0.9047018666979866,
+    "slow_fast": 0.699853636534145,
+    "cerebral_visceral": 0.5304381605557106,
+    "realistic_fantastical": 0.7143358382560219,
+    "intimate_epic": 0.5327730428397125,
+    "conventional_experimental": 0.5573580767426398,
+    "emotional_detached": 0.4294175337949062,
+    "nostalgic_contemporary": -0.04350114424687237,
+    "predictable_subversive": 0.6098073653279312
+  },
+  "mean_pearson_r": 0.5858803987503052,
+  "ranked_high_to_low": [
+    [
+      "dark_light",
+      0.9061496257781982
+    ],
+    [
+      "serious_playful",
+      0.8951561450958252
+    ],
+    [
+      "realistic_fantastical",
+      0.7287489771842957
+    ],
+    [
+      "slow_fast",
+      0.7121217250823975
+    ],
+    [
+      "predictable_subversive",
+      0.6042189598083496
+    ],
+    [
+      "intimate_epic",
+      0.5598129034042358
+    ],
+    [
+      "cerebral_visceral",
+      0.5471674203872681
+    ],
+    [
+      "conventional_experimental",
+      0.499125212430954
+    ],
+    [
+      "emotional_detached",
+      0.48016035556793213
+    ],
+    [
+      "nostalgic_contemporary",
+      -0.07385726273059845
+    ]
+  ],
+  "interpretation": "Per-axis cross-LLM Pearson correlation between Claude Haiku 4.5 and GPT-4o-mini mood vectors on identical 10,381 ML-20M items, identical prompts. Tiered: HIGH\u22650.7 (deployment-stable), MED 0.4-0.7 (use ensemble), LOW<0.4 (LLM-divergent, treat with caution)."
+}

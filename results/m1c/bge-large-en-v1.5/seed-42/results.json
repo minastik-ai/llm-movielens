@@ -1,0 +1,58 @@
+{
+  "experiment": "m1c/bge-large-en-v1.5/seed-42",
+  "best_epoch": 200,
+  "total_epochs_trained": 200,
+  "stopped_early": false,
+  "best_val_metrics": {
+    "HR@10": 0.2921306607275427,
+    "Recall@10": 0.030350852502801427,
+    "NDCG@10": 0.07016593840973419,
+    "HR@20": 0.3882702301410542,
+    "Recall@20": 0.05222229415583652,
+    "NDCG@20": 0.07058529735050723,
+    "HR@50": 0.5185597624350409,
+    "Recall@50": 0.10323430329566136,
+    "NDCG@50": 0.08204277945493473,
+    "MRR": 0.15327792814403862,
+    "n_eval_users": 2694
+  },
+  "test_metrics": {
+    "HR@10": 0.42149073023079836,
+    "Recall@10": 0.04716504665706427,
+    "NDCG@10": 0.1120375489083402,
+    "HR@20": 0.5315928868709799,
+    "Recall@20": 0.07756753750529766,
+    "NDCG@20": 0.10939014090044032,
+    "HR@50": 0.6795308361710178,
+    "Recall@50": 0.14750233450540437,
+    "NDCG@50": 0.12332862018083413,
+    "MRR": 0.23847317806296067,
+    "n_eval_users": 2643
+  },
+  "config": {
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "num_epochs": 200,
+    "patience": 20,
+    "patience_unit": "epochs",
+    "batch_size": 32768,
+    "min_epochs": 45,
+    "dense_eval_until": 20,
+    "eval_every": 5
+  },
+  "data": {
+    "n_users": 127371,
+    "n_items": 9906,
+    "n_train": 11499778,
+    "n_val": 49668,
+    "n_test": 67466
+  },
+  "model_hparams": {
+    "model": "xsimgcl",
+    "cl_weight": 0.02,
+    "noise_eps": 0.1,
+    "cl_temp": 0.2,
+    "layer_cl": 1,
+    "init": "uniform"
+  }
+}
