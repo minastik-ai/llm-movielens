@@ -97,7 +97,7 @@ encoder-dependent.
 ```bash
 # 0. Dependencies and source data. We do not redistribute the data; you fetch it under its own terms.
 pip install -r requirements.txt
-bash scripts/download_ml20m.sh
+bash scripts/download_ml20m.sh   # fetches https://files.grouplens.org/datasets/movielens/ml-20m.zip (works when the grouplens.org website is down)
 
 # 1. Generate profiles (needs ANTHROPIC_API_KEY). ~$21 via the Batches API.
 python3 src/profile_generator/batch_generate.py --dry-run   # inspect first, costs nothing
