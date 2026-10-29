@@ -1,10 +1,10 @@
 """The training loader's worker processes.
 
-Python 3.14 made `forkserver` the default start method on Linux. The loader's worker initialiser is a local
-function, which cannot be pickled under `forkserver` or `spawn` (`PicklingError: Can't pickle local object
-... _worker_init`). The loader therefore starts its workers with `fork` on Linux, as every earlier Python did,
-so the negatives are drawn exactly as in the published runs. These tests reproduce the failure under any
-non-fork default (macOS's `spawn` is one) and pin that the draws do not change.
+The loader's worker initialiser is a local function, which cannot be pickled under `forkserver` or `spawn`
+(`PicklingError: Can't pickle local object ... _worker_init`), the start methods some platforms default to.
+The loader therefore starts its workers with `fork` on Linux, so the negatives are drawn the same way
+whatever the interpreter's default. These tests check that the loader works under a non-fork default and
+that the draws do not change.
 """
 from __future__ import annotations
 

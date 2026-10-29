@@ -12,18 +12,15 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent
 CODE_ROOT = PROJECT_ROOT.parent
 
-# ML-20M raw data. Three locations were in play and none of them agreed:
-# scripts/download_ml20m.sh unzips to <repo>/data/raw/ml-20m, docs/REPRODUCIBILITY.md
-# passed data/ml-20m, and this constant pointed inside the vendored generator
-# directory -- a path nothing in the documented sequence ever creates, so
-# features/bert_baseline.py failed for any reader who followed the instructions.
-# Resolve in the order a reader will actually have it, env var first.
+# ML-20M raw data. scripts/download_ml20m.sh unzips to <repo>/data/raw/ml-20m and
+# docs/REPRODUCIBILITY.md also allows data/ml-20m. Resolve in the order a reader
+# will actually have it, env var first.
 PROFILE_GEN_ROOT = CODE_ROOT / "profile_generator" / "llm-movie-profiler-v1-20260402"
 REPO_ROOT = CODE_ROOT.parent
 _ML20M_CANDIDATES = [
     REPO_ROOT / "data" / "raw" / "ml-20m",   # what download_ml20m.sh creates
     REPO_ROOT / "data" / "ml-20m",           # a reader who passed --target-dir data
-    PROFILE_GEN_ROOT / "data" / "ml-20m",    # the original generation layout
+    PROFILE_GEN_ROOT / "data" / "ml-20m",    # the generator directory
 ]
 ML20M_DIR = Path(os.environ["ML20M_DIR"]) if os.environ.get("ML20M_DIR") else next(
     (c for c in _ML20M_CANDIDATES if (c / "ratings.csv").exists()), _ML20M_CANDIDATES[0])

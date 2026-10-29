@@ -3,13 +3,12 @@
 A fact kept in code must agree with the file that holds it. Three such facts are
 compared here, because a code copy that drifts from its file gives a wrong verdict:
 
-  * `eval_checkpoints.py` carried e5-large-v2 NDCG@10 anchors that were not the means
-    of the shipped e5 per-seed files, so a faithful e5 evaluation printed "differs from
-    the paper" and exited 1;
-  * `build_prompt_manifest.py` read settings names that do not exist and so wrote its
-    hard-coded fallbacks into the manifest header;
-  * `run_ablation.py` printed a population standard deviation where the paper and
-    the verifier report the sample one.
+  * the e5-large-v2 NDCG@10 anchors in `eval_checkpoints.py` equal the means of the
+    shipped e5 per-seed files;
+  * `build_prompt_manifest.py` reads settings names that exist, so the manifest header
+    carries the real settings rather than hard-coded fallbacks;
+  * `run_ablation.py` prints the sample standard deviation, as the paper and the
+    verifier do.
 """
 from __future__ import annotations
 

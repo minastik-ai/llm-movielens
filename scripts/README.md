@@ -124,7 +124,7 @@ are kept so each is separately checkable.
 
 | Script | What it does |
 |---|---|
-| `_paths.py` | Resolve the project's trees in BOTH the development and the published layout. |
+| `_paths.py` | Resolve the project's trees in both source layouts. |
 | `_amazon_run_helper.py` | Shared helper for Amazon-Books single-experiment runners. |
 | `_ml1m_run_helper.py` | Shared helper for ML-1M single-experiment runners. |
 

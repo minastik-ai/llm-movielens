@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
-"""Resolve the project's trees in BOTH the development and the published layout.
+"""Resolve the project's trees in both source layouts.
 
-The development checkout keeps generators under `<repo>/code/<component>/`, with
-the profiler in a dated directory. The published release flattens that to
-`<repo>/src/<component>/` and lifts the benchmark's per-seed results to
-`<repo>/results/`. A script that spelled either layout literally would run in one
-of the two places only.
+Generators live under `<repo>/code/<component>/` in the full source tree and under
+`<repo>/src/<component>/` in the released repository, which also keeps the
+benchmark's per-seed results in `<repo>/results/`. A script that spelled either
+layout literally would run in one of the two places only.
 
-`code(*parts)` takes the DEVELOPMENT spelling -- the one already written
-throughout these scripts -- and returns wherever that tree actually is. The
-development layout is tried first, so behaviour in this repository is unchanged.
+`code(*parts)` takes the `<repo>/code/...` spelling, the one written throughout
+these scripts, and returns wherever that tree actually is. The `code/` layout is
+tried first.
 
 `require()` is the other half. Some scripts read trees the release does not
 redistribute (vendored baselines, checkpoints, processed splits, generated
@@ -23,7 +22,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
-# development prefix -> published prefix. Longest match wins, so the results tree
+# `code/` prefix -> released prefix. Longest match wins, so the results tree
 # is lifted to the repository root before the benchmark rule can claim it.
 _LAYOUT: dict[tuple[str, ...], tuple[str, ...]] = {
     ("benchmark", "results"): ("results",),
@@ -44,7 +43,7 @@ _LAYOUT: dict[tuple[str, ...], tuple[str, ...]] = {
 # The marker is a FILE inside the tree, not the `code/` directory itself. A bare
 # directory test is not sound: several of these scripts create output directories
 # at import time, so a single stray run leaves an empty `code/` behind in a
-# published checkout -- and the next run then reads that as a development tree and
+# published checkout -- and the next run then reads that as a source tree and
 # resolves everything to somewhere nothing ships. The marker has to be something
 # only a real source tree contains.
 _DEV_MARKER = REPO / "code" / "benchmark" / "config.py"
@@ -53,14 +52,14 @@ _DEVELOPMENT = _DEV_MARKER.is_file() or not _PUB_MARKER.is_file()
 
 
 def code(*parts: str) -> Path:
-    """Path to the development `code/<parts>` tree, wherever it lives here."""
+    """Path to the `code/<parts>` tree, wherever it lives here."""
     if _DEVELOPMENT:
         return REPO.joinpath("code", *parts)
     for prefix in sorted(_LAYOUT, key=len, reverse=True):
         if tuple(parts[: len(prefix)]) == prefix:
             return REPO.joinpath(*_LAYOUT[prefix], *parts[len(prefix):])
     # Unmapped in a published checkout: nothing ships under it, so return the
-    # development spelling and let require() name what is missing.
+    # `code/` spelling and let require() name what is missing.
     return REPO.joinpath("code", *parts)
 
 
